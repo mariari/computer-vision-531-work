@@ -1,4 +1,4 @@
-module MatrixHelper (linearFilter, (⊕)) where
+module MatrixHelper (linearFilter, (⊕), extractWindows) where
 
 import           Data.Matrix  as M
 import           Data.Monoid
@@ -10,7 +10,6 @@ matrix310 = fromLists [[45,60,98,127,132,133,137,133]
                       ,[47,63,91,107,113,122,138,134]]
 
 fromBookOffset = fromList 3 3 $ replicate 4 0.1 <> (0.2 : repeat 0.1)
-
 -- Functions ======================================================================
 extractWindows :: Int -> Int -> Matrix a -> Matrix (Matrix a)
 extractWindows row col mat = matrix (nrows mat - row + 1) (ncols mat - col + 1) f
