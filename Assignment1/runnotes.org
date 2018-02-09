@@ -1,0 +1,2 @@
+-- compiling stack ghc -- -O2 -RTS -rtsopts ideas.hs
+-- running time ./ideas +RTS -sstderr
