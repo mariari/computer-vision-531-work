@@ -1,7 +1,11 @@
 module ImageHelper (
   testImage,
   imageToGreyMatrix,
-  imageToGreyMatrix'
+  imageToGreyMatrix',
+  blurSepX,
+  blurSepY,
+  blur,
+  matrixToGreyImg
   ) where
 
 import           MatrixHelper
@@ -11,15 +15,16 @@ import qualified Data.Vector as V
 import           Codec.Picture
 import qualified Data.Vector.Storable as VS
 import           Codec.Picture.Types
+import           Data.Word
+import qualified Data.Vector.Generic as VG
 
-testImage :: IO (Image PixelRGB8)
+testImage :: IO (Image PixelRGBA8)
 testImage = do
   img <- readImage "../data/test-image.png"
   case img of
-    Right (ImageRGB8 img) -> return img
+    Right (ImageRGBA8 img) -> return img
     Left err -> error ("can't load image: " <> err)
     Right _ -> error "unsupported format"
-
 
 imageToGreyMatrix :: LumaPlaneExtractable a => Image a -> Matrix (PixelBaseComponent a)
 imageToGreyMatrix img = matrix (imageWidth img) (imageHeight img) f
@@ -28,6 +33,7 @@ imageToGreyMatrix img = matrix (imageWidth img) (imageHeight img) f
     f (x,y) = pixelAt newImg (x - 1) (y - 1) -- matrix is 1 indexed not 0
 
 -- fusion does not happen, so this is slower than the non ' version
+imageToGreyMatrix' :: LumaPlaneExtractable a => Image a -> Matrix (PixelBaseComponent (PixelBaseComponent a))
 imageToGreyMatrix' img = fromList (imageWidth img) (imageHeight img) newVec
   where
     newVec  = VS.toList . imageData . extractLumaPlane $ img
@@ -35,36 +41,37 @@ imageToGreyMatrix' img = fromList (imageWidth img) (imageHeight img) newVec
 gausianConst :: Num a => [a]
 gausianConst = [1,4,6,4,1]
 
--- this would be easier to work with if Ι just used REPA, they have boundClamp defined for you
+-- this would be easier to work with if Ι just used REPA, they have boundClamp defined for you, and has stencil hacks
 -- this could be made a lot faster
 
-blurSepX :: (Num a1, RealFrac a2) => Matrix a2 -> Matrix a1
-blurSepX mat = matrix row col f
+-- I round up to Word16's
+-- also note that this algorithm can be made completely general on Integrals and not just Word8's however, I want speed
+blurSepX :: Matrix Word16 -> Matrix Word16
+blurSepX mat =  withWord16 (* gausblur) <$> extracted
   where
-    gausblur  = fromList 5 1 gausianConst
-    clampU    = colVector $ getCol 1   mat -- this gives us the clamp border effect
-    clampD    = colVector $ getCol col mat
+    clampU    = colVector $ getCol 1           mat -- this gives us the clamp border effect
+    clampD    = colVector $ getCol (ncols mat) mat
     buffered  = (clampU <|> clampU) <|> mat <|> (clampD <|> clampD)
     extracted = extractWindows 1 5 buffered
-    row       = nrows mat
-    col       = ncols mat
-    blur p    = sum $ (extracted ! p) * gausblur
-    f p       = fromIntegral . round $ (blur p / 16)
+    gausblur  = fromList 5 1 gausianConst
 
-blurSepY :: (Num a1, RealFrac a2) => Matrix a2 -> Matrix a1
-blurSepY mat = matrix row col f
+blurSepY :: Matrix Word16 -> Matrix Word16
+blurSepY mat = withWord16 (gausblur *)  <$> extracted
   where
-    gausblur  = fromList 1 5 gausianConst
-    zeros     = fromList 2 col (repeat 0)
-    clampL    = rowVector $ getRow 1   mat
-    clampR    = rowVector $ getRow row mat
+    clampL    = rowVector $ getRow 1           mat
+    clampR    = rowVector $ getRow (nrows mat) mat
     buffered  = (clampL <-> clampL) <-> mat <-> (clampR <-> clampR)
     extracted = extractWindows 5 1 buffered
-    row       = nrows mat
-    col       = ncols mat
-    blur p    = sum $ gausblur * (extracted ! p)
-    f p       = fromIntegral . round $ (blur p / 16)
+    gausblur  = fromList 1 5 gausianConst
 
+withWord16 :: (Matrix Word16 -> Matrix Word16) -> Matrix Word16 -> Word16
+withWord16 f mat = (`div` 16) . sum $ f mat16
+  where
+    mat16 = fromIntegral <$> mat :: Matrix Word16
 
-blur :: (Num a1, RealFrac a2) => Matrix a2 -> Matrix a1
-blur = blurSepY . blurSepX
+blur :: Matrix Word16 -> Matrix Word8
+blur = fmap fromIntegral . blurSepY . blurSepX
+
+matrixToGreyImg :: Pixel a => Matrix a -> Image a
+matrixToGreyImg mat = generateImage f (ncols mat) (nrows mat)
+  where f i j = mat ! (i + 1, j + 1)

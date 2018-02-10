@@ -35,6 +35,7 @@ library
     , JuicyPixels
   exposed-modules:
       MatrixHelper
+      ImageHelper
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010
