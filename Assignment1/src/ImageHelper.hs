@@ -13,16 +13,15 @@ import           Data.Matrix  as M
 import           Data.Monoid
 import qualified Data.Vector as V
 import           Codec.Picture
-import qualified Data.Vector.Storable as VS
 import           Codec.Picture.Types
+import qualified Data.Vector.Storable as VS
 import           Data.Word
-import qualified Data.Vector.Generic as VG
 
-testImage :: IO (Image PixelRGBA8)
+testImage :: IO (Image PixelRGB8)
 testImage = do
-  img <- readImage "../data/test-image.png"
+  img <- readImage "../data/test-old.png"
   case img of
-    Right (ImageRGBA8 img) -> return img
+    Right (ImageRGB8 img) -> return img
     Left err -> error ("can't load image: " <> err)
     Right _ -> error "unsupported format"
 
