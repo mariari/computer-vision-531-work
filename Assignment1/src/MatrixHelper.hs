@@ -17,7 +17,7 @@ extractWindows row col mat = matrix (nrows mat - row + 1) (ncols mat - col + 1) 
     f (i,j) = submatrix i (i + row - 1) j (j + col - 1) mat
 
 linearFilter :: (RealFrac a, Integral b) => Matrix a -> Matrix a -> Matrix b
-linearFilter filt = fmap (round . foldr (+) 0 . elementwise (*) filt) . extractWindows row col
+linearFilter filt = fmap (round . sum . elementwise (*) filt) . extractWindows row col
   where row = nrows filt
         col = ncols filt
 

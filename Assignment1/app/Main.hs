@@ -8,15 +8,32 @@ import Codec.Picture.Types
 import Codec.Picture
 import Data.Matrix  as M
 import Data.Word
+import Codec.Picture.Repa               as C
+
 test = (⊕)
 
 
 --main :: IO ()
+
 main = do
+  x <- C.readImageRGB "./data/test-old.png"
+  let y = case x of Left _ -> undefined; Right z -> z
+  let z = R.blurCol (R.map fromIntegral (imgData y))
+  z' <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
+  let z'' = R.repaToRGBImage z'
+  savePngImage "./Color-save.png" (ImageRGB8 z'')
+--  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 1)
+--  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 0)
+--  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 2)
+
+
+
+mainRepaGrey = do
   x <- testImage
   let y = R.imageToGreyRepa x
   let z = R.blur $ R.map fromIntegral y
   savePngImage "./repa-test-real.png" (ImageY8 (R.repaToGreyImage z))
+
 
 mainMatrix :: IO ()
 mainMatrix = do

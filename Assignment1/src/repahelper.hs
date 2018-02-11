@@ -22,19 +22,16 @@ imageToGreyRepa img@(Image w h d) = R.fromFunction (Z :. w :. h) f
 
 
 gausianStencilX :: Num a => Stencil DIM2 a
-gausianStencilX = [stencil2| 1 4 6 4 1 |]
-
 gausianStencilY :: Num a => Stencil DIM2 a
+gausianStencilX = [stencil2| 1 4 6 4 1 |]
 gausianStencilY = [stencil2| 1
                              4
                              6
                              4
                              1 |]
 blurGausX :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
-blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
-
-
 blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
 blurGausY = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilY
 
 blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
