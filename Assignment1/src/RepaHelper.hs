@@ -9,16 +9,16 @@ module RepaHelper (
   blurCol,
   repaToRGBImage
   ) where
+
 import Data.Array.Repa                   as R
 import Data.Array.Repa.Stencil           as R
 import Data.Array.Repa.Stencil.Dim2      as RD
 import Codec.Picture
+import Codec.Picture.Repa                as C
 import Codec.Picture.Types
 import Data.Word
-import Codec.Picture.Repa               as C
-import Data.List(foldl',foldl1')
 
-
+-- DATA TYPES==============================================================================
 -- just a quick way to distingush between images with 1,3, or 4 words
 data MyImage a = RGB a a a | RGBA a a a a | Grey a
 
@@ -26,6 +26,7 @@ fromList :: [a] -> MyImage a
 fromList [a,b,c]   = RGB a b c
 fromList [a,b,c,d] = RGBA a b c d
 fromList [a]       = Grey a
+fromList _         = error "not a valid image"
 
 -- only going to be working on 2D images for now, trying to figure out slices is too much
 imageToGreyRepa :: LumaPlaneExtractable a => Image a -> Array D DIM2 (PixelBaseComponent a)
@@ -42,12 +43,10 @@ gausianStencilY = [stencil2| 1
                              6
                              4
                              1 |]
--- Working on Grey Images=============================================================
+-- Working on Grey Images=================================================================
 blurGausX :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
-blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
-
-
 blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
 blurGausY = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilY
 
 blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
@@ -56,28 +55,26 @@ blur = blurGausX . blurGausY
 repaToGreyImage :: (RealFrac a, Source r a) => Array r DIM2 a -> Image Word8
 repaToGreyImage xs = generateImage create width height
   where Z :. width :. height = R.extent xs
-        create i j           = fromIntegral (round (xs ! (Z :. i :. j))) :: Word8
+        create i j           = round (xs ! (Z :. i :. j)) :: Word8
 
-
--- Working on Colored Image and Grey Images========================================
+-- Working on Colored Image and Grey Images===============================================
 repaExtractWindows :: (Source r a) => Int -> Int -> Array r DIM3 a -> Array D DIM3 (Array D DIM3 a)
-repaExtractWindows row col arr = R.traverse arr newShape grabsubs
-  where newShape (Z :. i :. j :. k)   = Z :. i - row :. j - col :. k
-        grabsubs _ (Z :. i :. j :. k) = R.extract (Z :. i :. j :. k) (Z :. row :. col :. 1) arr
+repaExtractWindows row col arr = R.fromFunction (Z :. i - row :. j - col :. k) grabsubs
+  where Z :. i :. j :. k = R.extent arr
+        grabsubs sh      = R.extract sh (Z :. row :. col :. 1) arr
 
 
 blurCol :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
-blurCol arr = reshape (R.extent arr) . f . fromList  . fmap blur  $ slices arr
+blurCol = flip reshape . f . fromList . fmap blur . slices <*> R.extent
   where f (RGBA a b c d) = interleave4 a b c d
         f (RGB a b c)    = interleave3 a b c
         f (Grey a)       = a
 
 slices :: Source r e => Array r DIM3 e -> [Array D DIM2 e]
-slices arr = slices
+slices arr = f <$> [0..(k-1)]
   where
     (Z :. _ :. _ :. k) = R.extent arr
-    slices             = take k $ foldr f [] [0..(k-1)]
-      where f a lis    = slice arr (Z :. All :. All :. (a :: Int)) : lis
+    f a                = slice arr (Z :. All :. All :. (a :: Int))
 
 
 repaToRGBImage :: (RealFrac a, Source r a) => Array r DIM3 a -> Image PixelRGB8
@@ -86,6 +83,8 @@ repaToRGBImage arr = generateImage create height width -- may have mixed up the 
     Z :. width :. height :. _ = R.extent arr
     create i j                = PixelRGB8 (grab 0) (grab 1) (grab 2)
       where grab k = round $ arr ! (Z :. j :. i :. k) :: Word8
+
+-- Testing functions=====================================================================
 
 testIO = do
   x <- C.readImageRGB "../Assignment1/data/test-image.png"

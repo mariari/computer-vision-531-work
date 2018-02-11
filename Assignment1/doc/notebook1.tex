@@ -1,0 +1,192 @@
+% Created 2018-02-11 Sun 03:40
+\documentclass{article}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage[margin=1.0in]{geometry}
+\date{\today}
+\title{notebook1}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.3.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Overview of the Blurring filter}
+\label{sec-1}
+\begin{enumerate}
+\item What is a Blurring filter?
+\label{sec-1-1}
+\begin{itemize}
+\item A blurring filter in this case is just a function that works on the
+neighborhood of a pixel
+\begin{itemize}
+\item this is also known as a linear filter
+\item can be expressed mathematically as $g(i,j) = \sum_{k,l}f(i + k, j +l)h(k,l)$
+\begin{itemize}
+\item where $g$ represents the new image
+\item $f$ is the original image
+\item and $h$ is the is the weight/kernel
+\end{itemize}
+\item This operation is also considered f being convolved by h
+\end{itemize}
+\end{itemize}
+\item Types of Kernels
+\label{sec-1-2}
+\begin{itemize}
+\item Not all Kernels produce a blurring filter, for example the Sobel
+kernel (shown below) is more useful for edge detection than for blurring
+\begin{itemize}
+\item the following two are the x and y Sobel kernel respectively
+\begin{pmatrix}
+  -1 & -2 & -1\\
+  0  & 0  &  0\\
+  +1 & +2 & +1
+\end{pmatrix}
+,
+\begin{pmatrix}
+  -1 & 0 & +1\\
+  -2  & 0  & +2\\
+  -1 & 0 & +1
+\end{pmatrix}
+\end{itemize}
+\item Though there are a few filters that can work for blurring, Ι used
+the Gaussian filter which can be defined as such below
+\begin{itemize}
+\item Gaussian $= \frac{1}{256}$ ×
+\begin{pmatrix}
+  1 & 4 & 6 & 4  & 1 \\
+  2 & 8 & 12 & 8 & 2 \\
+  6 & 24 & 36 & 24 & 6 \\
+  2 & 8 & 12 & 8 & 2 \\
+  1 & 4 & 6 & 4 & 1
+\end{pmatrix}
+\end{itemize}
+\end{itemize}
+\begin{enumerate}
+\item Issues and Optimizations to the Kernel
+\label{sec-1-2-1}
+\begin{itemize}
+\item So the issue with the Gaussian filter above is that applying the
+convolution would take $O(K^2)$ for every pixel of the image $f$,
+which could turn out very slow.
+\item Thankfully there is a way to get this operation to $O(2K)$, however
+the kernel matrix must be separable.
+\item So for the Gaussian filter above we can define it like this
+\begin{itemize}
+\item $v = \frac{1}{16}$ ×
+\begin{pmatrix}
+  1 & 4 & 6 & 4 & 1
+\end{pmatrix}
+\item $h = v$
+\item Gausian $= vh^T$
+\end{itemize}
+\end{itemize}
+\end{enumerate}
+\item Dealing With Edge Cases
+\label{sec-1-3}
+\begin{itemize}
+\item So there is one more issue with the linear filter method, and that
+deals with the edge of the image matrix, as there may not be an
+up,left,right or down for any particular pixel.
+\item So there are a few schemas available, and I will outline the ones I tried
+\begin{itemize}
+\item My first instinct was to fill the surrounding matrix with zeros, and
+then apply the transformation above. This is also known as the
+zero padding
+\begin{itemize}
+\item for a very short while I even tried reducing how much each
+edge was divided by, as 0's don't add anything to the total, so
+I made a formulation that divided by the correct numbered multiplied.
+\item This formulation worked kind of well until I realized that
+GausBlurX $\circ$ GausBlurY ≠ GausBlurY $\circ$ GausBlurX. and thus the
+transformation really isn't separable
+\end{itemize}
+\item After reading the textbook for a bit I ended up deciding to go
+with clamp padding, which basically just repeats the edges on
+either side, so the calculation would more accurately represent
+the edges. Ι will talk more about how this is implemented in each
+section in the implementation section
+\end{itemize}
+\end{itemize}
+\end{enumerate}
+\section{Implementing the Blurring filter}
+\label{sec-2}
+\begin{itemize}
+\item I did this exercise twice actually
+\begin{enumerate}
+\item With a Matrix Library
+\begin{itemize}
+\item \uline{Pros}
+\begin{itemize}
+\item this was quite easy to work with, as it abstracted the 1D vector
+\item Can use Purely
+\item has O(1) slices by just changing the internal bounds
+\end{itemize}
+\item \uline{Cons}
+\begin{itemize}
+\item it did not give me proper access to create the type, so I had to
+rely on fusion to convert my image to the data type
+\item turned out to be slow when Ι promoted the Word8 (8-bit unsigned
+ℤ) to Word16 (16-bit unsigned ℤ). It went from a .11 second
+computation to never stopping believe it or not! (I figure it has
+something to do with caching rather than anything with 8-bit vs
+16 bit computation)
+\begin{itemize}
+\item I ended up spending hours trying to investigate this
+problem and got nowhere
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item With the REPA Library
+\begin{itemize}
+\item \uline{Pros}
+\begin{itemize}
+\item Very fast, as they are automatically parallelized and use a lot
+of fusion
+\item Represented with pure data operations outside of forcing
+parallelism
+\item Abstracted out making the stencil and boundary clamp part of
+the problem
+\item Has an extension to work natively with the library that reads
+my images (JuicyPixels)
+\end{itemize}
+\item \uline{Cons}
+\begin{itemize}
+\item Very hard to understand at first
+\begin{itemize}
+\item Took me hours to get what I was even doing
+\item Instead of a normal representation of nested vectors, it
+abstract out all details via a backwords list structure
+known as a shape
+\item Also all computation causes the vector to not exist until
+some action forces it, that way intermediate data
+structures are just left as functions and are fused out
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{enumerate}
+\end{itemize}
+\begin{enumerate}
+\item 
+\label{sec-2-1}
+\end{enumerate}
+% Emacs 25.3.1 (Org mode 8.2.10)
+\end{document}

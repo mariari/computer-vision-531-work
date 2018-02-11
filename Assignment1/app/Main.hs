@@ -16,8 +16,8 @@ test = (⊕)
 --main :: IO ()
 
 main = do
-  x <- C.readImageRGB "./data/test-old.png"
-  let y = case x of Left _ -> undefined; Right z -> z
+  x <- C.readImageRGB "./data/Color-test.png"
+  let y = case x of Left _ -> error "image not found"; Right z -> z
   let z = R.blurCol (R.map fromIntegral (imgData y))
   z' <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
   let z'' = R.repaToRGBImage z'
