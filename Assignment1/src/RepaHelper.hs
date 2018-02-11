@@ -78,7 +78,7 @@ slices arr = f <$> [0..(k-1)]
 
 
 repaToRGBImage :: (RealFrac a, Source r a) => Array r DIM3 a -> Image PixelRGB8
-repaToRGBImage arr = generateImage create height width -- may have mixed up the width and height
+repaToRGBImage arr = generateImage create height width -- may have mixed up the width and height at some point
   where
     Z :. width :. height :. _ = R.extent arr
     create i j                = PixelRGB8 (grab 0) (grab 1) (grab 2)

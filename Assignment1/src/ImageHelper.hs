@@ -48,18 +48,18 @@ gausianConst = [1,4,6,4,1]
 blurSepX :: Matrix Word16 -> Matrix Word16
 blurSepX mat =  withWord16 (* gausblur) <$> extracted
   where
-    clampU    = colVector $ getCol 1           mat -- this gives us the clamp border effect
-    clampD    = colVector $ getCol (ncols mat) mat
-    buffered  = (clampU <|> clampU) <|> mat <|> (clampD <|> clampD)
+    clampL    = colVector $ getCol 1           mat -- this gives us the clamp border effect
+    clampR    = colVector $ getCol (ncols mat) mat
+    buffered  = (clampL <|> clampL) <|> mat <|> (clampR <|> clampR)
     extracted = extractWindows 1 5 buffered
     gausblur  = fromList 5 1 gausianConst
 
 blurSepY :: Matrix Word16 -> Matrix Word16
 blurSepY mat = withWord16 (gausblur *)  <$> extracted
   where
-    clampL    = rowVector $ getRow 1           mat
-    clampR    = rowVector $ getRow (nrows mat) mat
-    buffered  = (clampL <-> clampL) <-> mat <-> (clampR <-> clampR)
+    clampU    = rowVector $ getRow 1           mat
+    clampD    = rowVector $ getRow (nrows mat) mat
+    buffered  = (clampU <-> clampU) <-> mat <-> (clampD <-> clampD)
     extracted = extractWindows 5 1 buffered
     gausblur  = fromList 1 5 gausianConst
 
