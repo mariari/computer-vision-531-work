@@ -6,20 +6,41 @@ import qualified Data.Array.Repa as R
 import Codec.Picture.Types
 import Codec.Picture
 import Codec.Picture.Repa               as C
-
+import EdgeDetect
+import qualified Vision.Image as I
 --main :: IO ()
+
 main = do
+  mainRepa
+
+--runs in about 20 seconds
+mainCanny = do
+  x <- C.readImageRGB "./data/Color-wires-test.png"
+  let y = case x of Left _ -> error "image not found"; Right z -> z
+  -- blurring
+  let z = R.blurCol (R.map fromIntegral (imgData y))
+  parallelB <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
+  let z' = R.repaToRGBImage parallelB
+  -- Canny Algo
+  parallelC <- I.computeP (cannyEdge 5 120 300 z')
+  let z''' = toJuicyGrey parallelC
+  -- Save
+  savePngImage "./Color-save.png" (ImageY8 z''')
+
+
+-- Runs in about 20 seconds
+mainRepa = do
   x <- C.readImageRGB "./data/Color-test.png"
   let y = case x of Left _ -> error "image not found"; Right z -> z
+  -- Blurring
   let z = R.blurCol (R.map fromIntegral (imgData y))
-  z' <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
-  z'' <- R.edgeColMinP z' 210
+  z'  <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
+  -- Sobel Edge Detection
+  z'' <- R.edgeColMinP z' 100
   computed <- R.computeUnboxedP z'' :: IO(R.Array R.U R.DIM3 Double)
   let z''' = R.repaToRGBImage computed
+  -- Save
   savePngImage "./Color-save.png" (ImageRGB8 z''')
---  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 1)
---  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 0)
---  print $ z R.! (R.Z R.:. 1 R.:. 1 R.:. 2)
 
 mainRepaGrey = do
   x <- testImage

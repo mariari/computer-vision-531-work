@@ -36,10 +36,12 @@ library
     , JuicyPixels
     , JuicyPixels-repa >= 0.7.1.0
     , friday
+    , friday-juicypixels
   exposed-modules:
       MatrixHelper
       ImageHelper
       RepaHelper
+      EdgeDetect
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010
@@ -58,6 +60,7 @@ executable Assignment1-exe
     , JuicyPixels
     , JuicyPixels-repa >= 0.7.1.0
     , friday
+    , friday-juicypixels
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010

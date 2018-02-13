@@ -1,5 +1,7 @@
 module ImageHelper (
   testImage,
+  loadRGB,
+  loadRGBA,
   imageToGreyMatrix,
   imageToGreyMatrix',
   blurSepX,
@@ -17,13 +19,25 @@ import           Codec.Picture.Types
 import qualified Data.Vector.Storable as VS
 import           Data.Word
 
-testImage :: IO (Image PixelRGB8)
-testImage = do
-  img <- readImage "../data/test-old.png"
+
+loadRGB :: FilePath -> IO (Image PixelRGB8)
+loadRGB path = do
+  img <- readImage path
   case img of
     Right (ImageRGB8 img) -> return img
     Left err -> error ("can't load image: " <> err)
     Right _ -> error "unsupported format"
+
+loadRGBA :: FilePath -> IO (Image PixelRGBA8)
+loadRGBA path = do
+  img <- readImage path
+  case img of
+    Right (ImageRGBA8 img) -> return img
+    Left err -> error ("can't load image: " <> err)
+    Right _ -> error "unsupported format"
+
+
+testImage = loadRGBA "../data/test-old.png"
 
 imageToGreyMatrix :: LumaPlaneExtractable a => Image a -> Matrix (PixelBaseComponent a)
 imageToGreyMatrix img = matrix (imageWidth img) (imageHeight img) f
