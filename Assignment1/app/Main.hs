@@ -13,7 +13,7 @@ main = do
   let y = case x of Left _ -> error "image not found"; Right z -> z
   let z = R.blurCol (R.map fromIntegral (imgData y))
   z' <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
-  let z'' = R.edgeCol z'
+  z'' <- R.edgeColMinP z' 210
   computed <- R.computeUnboxedP z'' :: IO(R.Array R.U R.DIM3 Double)
   let z''' = R.repaToRGBImage computed
   savePngImage "./Color-save.png" (ImageRGB8 z''')

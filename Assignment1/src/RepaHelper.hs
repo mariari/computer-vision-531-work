@@ -8,9 +8,12 @@ module RepaHelper (
   repaExtractWindows,
   blurCol,
   repaToRGBImage,
-  edgeCol
+  edgeCol,
+  edgeColMinP,
+  edgeColMinS
   ) where
 
+import qualified Data.Vector.Unboxed as V
 import Data.Array.Repa                   as R
 import Data.Array.Repa.Stencil
 import Data.Array.Repa.Stencil.Dim2
@@ -83,8 +86,6 @@ repaExtractWindows row col arr = R.fromFunction (Z :. i - row :. j - col :. k) g
   where Z :. i :. j :. k = R.extent arr
         grabsubs sh      = R.extract sh (Z :. row :. col :. 1) arr
 
-
---with2d :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
 with2d f = flip reshape . g . fromList . fmap f . slices <*> R.extent
   where g (RGBA a b c d) = interleave4 a b c d
         g (RGB a b c)    = interleave3 a b c
@@ -92,7 +93,6 @@ with2d f = flip reshape . g . fromList . fmap f . slices <*> R.extent
 
 blurCol :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
 blurCol = with2d blur
-
 
 edgeCol :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
 edgeCol = with2d sobel
@@ -110,6 +110,34 @@ repaToRGBImage arr = generateImage create height width -- may have mixed up the 
     Z :. width :. height :. _ = R.extent arr
     create i j                = PixelRGB8 (grab 0) (grab 1) (grab 2)
       where grab k = round $ arr ! (Z :. j :. i :. k) :: Word8
+
+
+-- Filter a pixel of an array if it is below a certain amount
+-- here we are going to make a new array via making a new one and traversing
+
+-- Sadly can't make a generic one due to how the type signatures turned out... so that's a shame
+filterPixelsS :: (Source r b, Fractional b, Ord b, V.Unbox b) => Array r DIM3 b -> b -> Array D DIM3 b
+filterPixelsS arr min = R.traverse arr id (passThresh min averaged)
+  where
+    (Z :. _ :. _ :. k) = R.extent arr
+    averaged           = R.sumS $ R.map (/ fromIntegral k) arr
+
+filterPixelsP :: (Monad m, Source r b, Fractional b, Ord b, V.Unbox b) => Array r DIM3 b -> b -> m (Array D DIM3 b)
+filterPixelsP arr min = (R.traverse arr id . passThresh min) <$> averaged
+  where
+    (Z :. _ :. _ :. k) = R.extent arr
+    averaged           = R.sumP $ R.map (/ fromIntegral k) arr
+
+-- helper for filterPixelP and S
+passThresh min avg f sh@(Z :. i :. j :. _) | avg ! ix2 i j >= min = f sh
+                                           | otherwise            = 0
+
+
+edgeColMinS :: (Source r b, V.Unbox b, Ord b, Fractional b) => Array r DIM3 b -> b -> Array D DIM3 b
+edgeColMinS = filterPixelsS . edgeCol
+
+edgeColMinP :: (Monad m, Source r b, V.Unbox b, Ord b, Fractional b) => Array r DIM3 b -> b -> m(Array D DIM3 b)
+edgeColMinP = filterPixelsP . edgeCol
 
 -- Testing functions=====================================================================
 
