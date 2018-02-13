@@ -1,4 +1,8 @@
 #+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
+
+* TODO extra stuff to add
+- Add extra information after each image
+- add a section of discussion after the two methods
 * Overview of the Blurring filter
 ** What is a Blurring filter?
 - A blurring filter in this case is just a function that works on the

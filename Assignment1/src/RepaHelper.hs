@@ -7,12 +7,13 @@ module RepaHelper (
   repaToGreyImage,
   repaExtractWindows,
   blurCol,
-  repaToRGBImage
+  repaToRGBImage,
+  edgeCol
   ) where
 
 import Data.Array.Repa                   as R
-import Data.Array.Repa.Stencil           as R
-import Data.Array.Repa.Stencil.Dim2      as RD
+import Data.Array.Repa.Stencil
+import Data.Array.Repa.Stencil.Dim2
 import Codec.Picture
 import Codec.Picture.Repa                as C
 import Codec.Picture.Types
@@ -28,6 +29,7 @@ fromList [a,b,c,d] = RGBA a b c d
 fromList [a]       = Grey a
 fromList _         = error "not a valid image"
 
+
 -- only going to be working on 2D images for now, trying to figure out slices is too much
 imageToGreyRepa :: LumaPlaneExtractable a => Image a -> Array D DIM2 (PixelBaseComponent a)
 imageToGreyRepa img@(Image w h _) = R.fromFunction (Z :. w :. h) f
@@ -35,9 +37,19 @@ imageToGreyRepa img@(Image w h _) = R.fromFunction (Z :. w :. h) f
         newImg          = extractLumaPlane img
 
 
+sobelEdgeX :: Num a => Stencil DIM2 a
+sobelEdgeY :: Num a => Stencil DIM2 a
+sobelEdgeX = [stencil2| -1 0 1
+                        -2 0 2
+                        -1 0 1|]
+
+sobelEdgeY = [stencil2| -1 -2 -1
+                         0  0  0
+                         1  2  1|]
+
 gausianStencilX :: Num a => Stencil DIM2 a
 gausianStencilY :: Num a => Stencil DIM2 a
-gausianStencilX = [stencil2| 1 4 6 4 1 |]
+gausianStencilX = [stencil2| 1 4 6 4 1|]
 gausianStencilY = [stencil2| 1
                              4
                              6
@@ -49,8 +61,16 @@ blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
 blurGausY = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilY
 
+sobelX :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+sobelY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+sobelX = R.map (/ 1) . mapStencil2 BoundClamp sobelEdgeX
+sobelY = R.map (/ 1) . mapStencil2 BoundClamp sobelEdgeY
+
 blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blur = blurGausX . blurGausY
+
+sobel :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+sobel = sobelX . sobelY
 
 repaToGreyImage :: (RealFrac a, Source r a) => Array r DIM2 a -> Image Word8
 repaToGreyImage xs = generateImage create width height
@@ -64,11 +84,18 @@ repaExtractWindows row col arr = R.fromFunction (Z :. i - row :. j - col :. k) g
         grabsubs sh      = R.extract sh (Z :. row :. col :. 1) arr
 
 
+--with2d :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
+with2d f = flip reshape . g . fromList . fmap f . slices <*> R.extent
+  where g (RGBA a b c d) = interleave4 a b c d
+        g (RGB a b c)    = interleave3 a b c
+        g (Grey a)       = a
+
 blurCol :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
-blurCol = flip reshape . f . fromList . fmap blur . slices <*> R.extent
-  where f (RGBA a b c d) = interleave4 a b c d
-        f (RGB a b c)    = interleave3 a b c
-        f (Grey a)       = a
+blurCol = with2d blur
+
+
+edgeCol :: (Fractional e, Source r e) => Array r DIM3 e -> Array D DIM3 e
+edgeCol = with2d sobel
 
 slices :: Source r e => Array r DIM3 e -> [Array D DIM2 e]
 slices arr = f <$> [0..(k-1)]
