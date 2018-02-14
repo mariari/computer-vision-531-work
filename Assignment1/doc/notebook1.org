@@ -1,5 +1,5 @@
 #+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
-
+vector
 * TODO extra stuff to add
 - Add extra information after each image
 - add a section of discussion after the two methods
@@ -10,7 +10,8 @@
   + this is also known as a linear filter
   + can be expressed mathematically as $g(i,j) = \sum_{k,l}f(i + k, j +l)h(k,l)$
     * where $g$ represents the new image
-    * $f$ is the original image
+    * $f$ is the original imageblurGausX :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
     * and $h$ is the is the weight/kernel
   + This operation is also considered f being convolved by h
 ** Types of Kernels

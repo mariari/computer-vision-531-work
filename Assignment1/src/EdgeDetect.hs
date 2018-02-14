@@ -8,10 +8,9 @@ module EdgeDetect
 import           Vision.Detector.Edge(canny)
 import qualified Vision.Image as I
 import           Vision.Image.Conversion
-import           Vision.Image.JuicyPixels as J
+import           Vision.Image.JuicyPixels
 import           Codec.Picture.Types
-import Foreign.Storable
-import GHC.Int
+import           GHC.Int
 
 toGrey :: I.RGB -> I.Grey
 toGrey = convert

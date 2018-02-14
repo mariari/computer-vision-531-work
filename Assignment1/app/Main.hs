@@ -11,18 +11,18 @@ import qualified Vision.Image as I
 --main :: IO ()
 
 main = do
-  mainRepa
+  mainCanny
 
 --runs in about 20 seconds
 mainCanny = do
-  x <- C.readImageRGB "./data/Color-wires-test.png"
+  x <- C.readImageRGB "./data/Trees.jpg"
   let y = case x of Left _ -> error "image not found"; Right z -> z
   -- blurring
   let z = R.blurCol (R.map fromIntegral (imgData y))
   parallelB <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
   let z' = R.repaToRGBImage parallelB
   -- Canny Algo
-  parallelC <- I.computeP (cannyEdge 5 120 300 z')
+  parallelC <- I.computeP (cannyEdge 5 220 300 z')
   let z''' = toJuicyGrey parallelC
   -- Save
   savePngImage "./Color-save.png" (ImageY8 z''')
