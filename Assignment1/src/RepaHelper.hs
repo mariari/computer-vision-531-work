@@ -1,16 +1,13 @@
 {-# LANGUAGE QuasiQuotes, FlexibleContexts #-}
 module RepaHelper (
-  imageToGreyRepa,
   blurGausX,
   blurGausY,
   blur,
-  repaToGreyImage,
   repaExtractWindows,
   blurCol,
-  repaToRGBImage,
   edgeCol,
   edgeColMinP,
-  edgeColMinS
+  edgeColMinS,
   ) where
 
 import qualified Data.Vector.Unboxed as V
@@ -18,10 +15,7 @@ import Data.Array.Repa                   as R
 import Data.Array.Repa.Stencil
 import Data.Array.Repa.Stencil.Dim2
 import Codec.Picture
-import Codec.Picture.Repa                as C
-import Codec.Picture.Types
-import Data.Word
-
+import RepaImage
 -- DATA TYPES==============================================================================
 -- just a quick way to distingush between images with 1,3, or 4 words
 data MyImage a = RGB a a a | RGBA a a a a | Grey a
@@ -31,14 +25,6 @@ fromList [a,b,c]   = RGB a b c
 fromList [a,b,c,d] = RGBA a b c d
 fromList [a]       = Grey a
 fromList _         = error "not a valid image"
-
-
--- only going to be working on 2D images for now, trying to figure out slices is too much
-imageToGreyRepa :: LumaPlaneExtractable a => Image a -> Array D DIM2 (PixelBaseComponent a)
-imageToGreyRepa img@(Image w h _) = R.fromFunction (Z :. w :. h) f
-  where f (Z :. i :. j) = pixelAt newImg i j
-        newImg          = extractLumaPlane img
-
 
 sobelEdgeX :: Num a => Stencil DIM2 a
 sobelEdgeY :: Num a => Stencil DIM2 a
@@ -64,21 +50,16 @@ blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
 blurGausY = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilY
 
-sobelX :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
-sobelY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
-sobelX = R.map (/ 1) . mapStencil2 BoundClamp sobelEdgeX
-sobelY = R.map (/ 1) . mapStencil2 BoundClamp sobelEdgeY
+sobelX :: (Source r b, Num b) => Array r DIM2 b -> Array D DIM2 b
+sobelY :: (Source r b, Num b) => Array r DIM2 b -> Array D DIM2 b
+sobelX = delay . mapStencil2 BoundClamp sobelEdgeX
+sobelY = delay . mapStencil2 BoundClamp sobelEdgeY
 
 blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blur = blurGausX . blurGausY
 
-sobel :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+sobel :: (Source r b, Num b) => Array r DIM2 b -> Array D DIM2 b
 sobel = sobelX . sobelY
-
-repaToGreyImage :: (RealFrac a, Source r a) => Array r DIM2 a -> Image Word8
-repaToGreyImage xs = generateImage create width height
-  where Z :. width :. height = R.extent xs
-        create i j           = round (xs ! (Z :. i :. j)) :: Word8
 
 -- Working on Colored Image and Grey Images===============================================
 repaExtractWindows :: (Source r a) => Int -> Int -> Array r DIM3 a -> Array D DIM3 (Array D DIM3 a)
@@ -100,17 +81,8 @@ edgeCol = with2d sobel
 slices :: Source r e => Array r DIM3 e -> [Array D DIM2 e]
 slices arr = f <$> [0..(k-1)]
   where
-    (Z :. _ :. _ :. k) = R.extent arr
-    f a                = slice arr (Z :. All :. All :. (a :: Int))
-
-
-repaToRGBImage :: (RealFrac a, Source r a) => Array r DIM3 a -> Image PixelRGB8
-repaToRGBImage arr = generateImage create height width -- may have mixed up the width and height at some point
-  where
-    Z :. width :. height :. _ = R.extent arr
-    create i j                = PixelRGB8 (grab 0) (grab 1) (grab 2)
-      where grab k = round $ arr ! (Z :. j :. i :. k) :: Word8
-
+    Z :. _ :. _ :. k = R.extent arr
+    f a              = slice arr (Z :. All :. All :. (a :: Int))
 
 -- Filter a pixel of an array if it is below a certain amount
 -- here we are going to make a new array via making a new one and traversing
@@ -132,7 +104,6 @@ filterPixelsP arr min = (R.traverse arr id . passThresh min) <$> averaged
 passThresh min avg f sh@(Z :. i :. j :. _) | avg ! ix2 i j >= min = f sh
                                            | otherwise            = 0
 
-
 edgeColMinS :: (Source r b, V.Unbox b, Ord b, Fractional b) => Array r DIM3 b -> b -> Array D DIM3 b
 edgeColMinS = filterPixelsS . edgeCol
 
@@ -142,10 +113,8 @@ edgeColMinP = filterPixelsP . edgeCol
 -- Testing functions=====================================================================
 
 testIO = do
-  x <- C.readImageRGB "../Assignment1/data/test-image.png"
-  let y = case x of Left _ -> undefined; Right z -> z
-  let z = imgData y
-  let z' = blurCol (R.map fromIntegral (imgData y)) :: Array D DIM3 Double
+  z <- readIntoRepa "../Assignment1/data/test-image.png"
+  let z' = blurCol (R.map fromIntegral z) :: Array D DIM3 Double
   print (z' ! (Z :. 1 :. 1 :. 0))
   print (z' ! (Z :. 1 :. 1 :. 1))
   print (z' ! (Z :. 1 :. 1 :. 2))

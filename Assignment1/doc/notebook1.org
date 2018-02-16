@@ -103,12 +103,12 @@ blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
        + Abstracted out making the stencil and boundary clamp part of
          the problem
        + Has an extension to work natively with the library that reads
-         my images (JuicyPixels)
+         images (JuicyPixels)
      - _Cons_
        + Very hard to understand at first
          * Took me hours to get what I was even doing
          * Instead of a normal representation of nested vectors, it
-           abstract out all details via a backwords list structure
+           abstract out all details via a backwards list structure
            known as a shape
          * Also all computation causes the vector to not exist until
            some action forces it, that way intermediate data

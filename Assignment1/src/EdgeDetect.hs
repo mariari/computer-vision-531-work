@@ -17,4 +17,3 @@ toGrey = convert
 
 cannyEdge :: Int -> Int32 -> Int32 -> Image PixelRGB8 -> I.Grey
 cannyEdge radS min up = canny radS min up . toGrey . toFridayRGB
-

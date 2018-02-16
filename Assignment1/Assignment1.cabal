@@ -33,15 +33,19 @@ library
     , matrix
     , vector
     , repa >= 3.4.1.2
+    , repa-algorithms
     , JuicyPixels
     , JuicyPixels-repa >= 0.7.1.0
     , friday
     , friday-juicypixels
+    , mtl
   exposed-modules:
       MatrixHelper
       ImageHelper
       RepaHelper
+      RepaImage
       EdgeDetect
+      ImageCorrelation
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010
@@ -57,10 +61,12 @@ executable Assignment1-exe
     , matrix
     , vector
     , repa >= 3.4.1.2
+    , repa-algorithms
     , JuicyPixels
     , JuicyPixels-repa >= 0.7.1.0
     , friday
     , friday-juicypixels
+    , mtl
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010

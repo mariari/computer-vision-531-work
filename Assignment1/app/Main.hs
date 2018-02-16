@@ -1,6 +1,8 @@
 module Main where
 
+import RepaImage as R
 import ImageHelper
+import ImageCorrelation
 import qualified RepaHelper as R
 import qualified Data.Array.Repa as R
 import Codec.Picture.Types
@@ -11,7 +13,13 @@ import qualified Vision.Image as I
 --main :: IO ()
 
 main = do
-  mainCanny
+  mainCorr
+
+mainCorr = do
+  x <- imageCorrelation 254 "./data/object/soccer-kernel.jpg" "./data/object/soccer_balls.jpg"
+  x' <- R.computeUnboxedP $ R.map fromIntegral x :: IO (R.Array R.U R.DIM2 Double)
+  let x'' = R.repaToGreyImage x'
+  savePngImage "ImageCorrTest.png" (ImageY8 x'')
 
 --runs in about 20 seconds
 mainCanny = do

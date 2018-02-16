@@ -1,6 +1,7 @@
 module ImageHelper (
   testImage,
   loadRGB,
+  loadRGB16,
   loadRGBA,
   imageToGreyMatrix,
   imageToGreyMatrix',
@@ -20,21 +21,27 @@ import qualified Data.Vector.Storable as VS
 import           Data.Word
 
 
-loadRGB :: FilePath -> IO (Image PixelRGB8)
-loadRGB path = do
+load path = do
   img <- readImage path
   case img of
-    Right (ImageRGB8 img) -> return img
+    Right a -> return a
     Left err -> error ("can't load image: " <> err)
-    Right _ -> error "unsupported format"
+
+
+loadRGB :: FilePath -> IO (Image PixelRGB8)
+loadRGB = fmap f . load
+  where f (ImageRGB8 img) = img
+        f _               = error "unsupported format"
 
 loadRGBA :: FilePath -> IO (Image PixelRGBA8)
-loadRGBA path = do
-  img <- readImage path
-  case img of
-    Right (ImageRGBA8 img) -> return img
-    Left err -> error ("can't load image: " <> err)
-    Right _ -> error "unsupported format"
+loadRGBA = fmap f . load
+  where f (ImageRGBA8 img) = img
+        f _                = error "unsupported format"
+
+loadRGB16 :: FilePath -> IO (Image PixelRGB16)
+loadRGB16 = fmap f . load
+  where f (ImageRGB16 img) = img
+        f _                 = error "unsupported format"
 
 
 testImage = loadRGBA "../data/test-old.png"
