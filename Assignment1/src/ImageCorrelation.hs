@@ -4,7 +4,7 @@ module ImageCorrelation (
   convolve,
   toGreyP,
   imageCorrelation
-    ) where
+  ) where
 
 import RepaImage
 import Data.Array.Repa as R
@@ -13,6 +13,7 @@ import Data.Word
 import RepaHelper
 import Data.Array.Repa.Algorithms.Convolve as C
 import Control.Monad.Identity
+import Data.Array.Repa.Algorithms.Matrix
 import ImageHelper as I
 import qualified Data.Vector.Unboxed as V
 import Codec.Picture.Repa                as C
@@ -39,6 +40,8 @@ filterMin arr min = R.map f arr
             | otherwise = 0
 {-# INLINE filterMin #-}
 
+
+
 imageCorrelation ::  Word8 -> FilePath -> FilePath -> IO (Array U DIM2 Word8)
 imageCorrelation min path1 path2 = do
   x <- readIntoRepa path1 >>= toGreyP
@@ -46,4 +49,27 @@ imageCorrelation min path1 path2 = do
   convd <- convolve x y
   computeUnboxedP $ transpose $ filterMin convd min
 
--- the code above is all wrong, need to figure out SIFT and affine
+-- Okay so, Ι was kinda right, Ι just need to figure out how to normalize it
+padArray :: Source r e => Int -> Int -> Array r DIM2 e -> Array D DIM2 e
+padArray row col arr = R.backpermute (Z :. i + 2 * row  :. j + 2 * col) getClosest arr
+  where
+    Z :. i :. j = R.extent arr
+    getClosest (Z :. row' :. col') = ix2 roff coff
+     where coff = min (max (col' - col) 0) (i - 1) -- col' - col is for getting the pos in the old array
+           roff = min (max (row' - row) 0) (j - 1) -- from the new coordinates
+
+repaExtractWindows2D :: (Source r a) => Int -> Int -> Array r DIM2 a -> Array D DIM2 (Array D DIM2 a)
+repaExtractWindows2D row col arr = R.fromFunction (Z :. i - row :. j - col) grabsubs
+  where Z :. i :. j = R.extent arr
+        grabsubs sh = R.extract sh (Z :. row :. col) arr
+
+normalizedConv :: Monad m => Array U DIM2 Double -> Array U DIM2 Double -> m (Array U DIM2 Double)
+normalizedConv arr ker = do
+  let Z :. ik :. jk = R.extent ker
+  arrExtended      <- R.computeUnboxedP $ padArray (ik `div` 2) (jk `div` 2) arr
+  normKern         <- mmultP ker ker
+  let normKernSum   = normKern `deepSeqArray` sumAllS normKern
+  let extracted     = repaExtractWindows2D ik jk arrExtended -- this should be the same size as arr
+  let fn subarr     = sumAllS (subComp *^ ker) / sqrt (normKernSum * sumAllS (mmultS subComp subComp))
+        where subComp = computeUnboxedS subarr
+  R.computeUnboxedP $ R.map fn extracted

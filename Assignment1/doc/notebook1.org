@@ -1,5 +1,4 @@
 #+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
-vector
 * TODO extra stuff to add
 - Add extra information after each image
 - add a section of discussion after the two methods
@@ -114,7 +113,7 @@ blurGausY :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
            some action forces it, that way intermediate data
            structures are just left as functions and are fused out
 - and there was an even cooler way to implement this then the two listed
-  above, and it deals with commonads and cellular automata, but that is
+  above, and it deals with comonads and cellular automata, but that is
   something to be investigated at a later date
 ** Matrix Representation
 - So using a Matrix representation for this problem was my first

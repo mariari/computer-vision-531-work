@@ -18,12 +18,13 @@ main = do
 mainCorr = do
   x <- imageCorrelation 254 "./data/object/soccer-kernel.jpg" "./data/object/soccer_balls.jpg"
   x' <- R.computeUnboxedP $ R.map fromIntegral x :: IO (R.Array R.U R.DIM2 Double)
+  print x'
   let x'' = R.repaToGreyImage x'
   savePngImage "ImageCorrTest.png" (ImageY8 x'')
 
 --runs in about 20 seconds
 mainCanny = do
-  x <- C.readImageRGB "./data/Trees.jpg"
+  x <- C.readImageRGB "./data/03001042.jpg"
   let y = case x of Left _ -> error "image not found"; Right z -> z
   -- blurring
   let z = R.blurCol (R.map fromIntegral (imgData y))
@@ -38,7 +39,7 @@ mainCanny = do
 
 -- Runs in about 20 seconds
 mainRepa = do
-  x <- C.readImageRGB "./data/Color-test.png"
+  x <- C.readImageRGB "./data/03001042.jpg[]"
   let y = case x of Left _ -> error "image not found"; Right z -> z
   -- Blurring
   let z = R.blurCol (R.map fromIntegral (imgData y))
