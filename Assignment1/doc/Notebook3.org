@@ -1,0 +1,8 @@
+
+* Information and Pitfalls in Feature detection
+
+* Implementation of feature Detection
+** Lessons learned
+** By hand
+
+** OpenCV

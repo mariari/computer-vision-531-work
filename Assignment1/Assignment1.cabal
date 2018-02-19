@@ -39,6 +39,8 @@ library
     , friday
     , friday-juicypixels
     , mtl
+    , opencv
+    , bytestring
   exposed-modules:
       MatrixHelper
       ImageHelper
@@ -46,6 +48,7 @@ library
       RepaImage
       EdgeDetect
       ImageCorrelation
+      ImageCorrelationCv
   other-modules:
       Paths_Assignment1
   default-language: Haskell2010

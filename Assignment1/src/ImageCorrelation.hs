@@ -34,21 +34,6 @@ toGreyP :: (Monad m, V.Unbox a, Integral a, Source r a) => Array r DIM3 a -> m (
 toGreyP arr = R.sumP $ R.map (`div` fromIntegral k) arr
   where (Z :. _ :. _ :. k) = R.extent arr
 
---filterMin :: (Functor f, Shape sh, Source r p, Ord p, Num p) => f (Array r sh p) -> p -> f (Array D sh p)
-filterMin arr min = R.map f arr
-  where f x | x >= min  = x
-            | otherwise = 0
-{-# INLINE filterMin #-}
-
-
-
-imageCorrelation ::  Word8 -> FilePath -> FilePath -> IO (Array U DIM2 Word8)
-imageCorrelation min path1 path2 = do
-  x <- readIntoRepa path1 >>= toGreyP
-  y <- readIntoRepa path2 >>= toGreyP
-  convd <- convolve x y
-  computeUnboxedP $ transpose $ filterMin convd min
-
 -- Okay so, Ι was kinda right, Ι just need to figure out how to normalize it
 padArray :: Source r e => Int -> Int -> Array r DIM2 e -> Array D DIM2 e
 padArray row col arr = R.backpermute (Z :. i + 2 * row  :. j + 2 * col) getClosest arr
@@ -63,7 +48,7 @@ repaExtractWindows2D row col arr = R.fromFunction (Z :. i - row :. j - col) grab
   where Z :. i :. j = R.extent arr
         grabsubs sh = R.extract sh (Z :. row :. col) arr
 
-normalizedConv :: Monad m => Array U DIM2 Double -> Array U DIM2 Double -> m (Array U DIM2 Double)
+normalizedConv :: (Monad m, Source r Double) => Array r DIM2 Double -> Array U DIM2 Double -> m (Array U DIM2 Double)
 normalizedConv arr ker = do
   let Z :. ik :. jk = R.extent ker
   arrExtended      <- R.computeUnboxedP $ padArray (ik `div` 2) (jk `div` 2) arr
@@ -73,3 +58,19 @@ normalizedConv arr ker = do
   let fn subarr     = sumAllS (subComp *^ ker) / sqrt (normKernSum * sumAllS (mmultS subComp subComp))
         where subComp = computeUnboxedS subarr
   R.computeUnboxedP $ R.map fn extracted
+
+
+imageCorrelation ::  Double -> FilePath -> FilePath -> IO (Array U DIM2 Double)
+imageCorrelation min path1 path2 = do
+  x     <- readIntoRepa path1 >>= toGreyP
+  y     <- readIntoRepa path2 >>= toGreyP
+  let x' = R.map fromIntegral x
+  y'    <- R.computeUnboxedP $ R.map fromIntegral y
+  convd <- normalizedConv x' y'
+  computeUnboxedP $ transpose $ filterMin convd min
+
+
+filterMin arr min = R.map f arr
+  where f x | x >= min  = x * 255
+            | otherwise = 0
+{-# INLINE filterMin #-}

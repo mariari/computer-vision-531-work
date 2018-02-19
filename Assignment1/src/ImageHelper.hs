@@ -2,19 +2,21 @@ module ImageHelper (
   testImage,
   loadRGB,
   loadRGB16,
+  loadRGBA16,
   loadRGBA,
+  loadRGBJPG,
   imageToGreyMatrix,
   imageToGreyMatrix',
   blurSepX,
   blurSepY,
   blur,
+  load,
   matrixToGreyImg
   ) where
 
 import           MatrixHelper
 import           Data.Matrix  as M
 import           Data.Monoid
-import qualified Data.Vector as V
 import           Codec.Picture
 import           Codec.Picture.Types
 import qualified Data.Vector.Storable as VS
@@ -42,6 +44,16 @@ loadRGB16 :: FilePath -> IO (Image PixelRGB16)
 loadRGB16 = fmap f . load
   where f (ImageRGB16 img) = img
         f _                 = error "unsupported format"
+
+loadRGBA16 :: FilePath -> IO (Image PixelRGBA16)
+loadRGBA16 = fmap f . load
+  where f (ImageRGBA16 img) = img
+        f _                 = error "unsupported format"
+
+loadRGBJPG = fmap f . load
+  where f (ImageYCbCr8 img) = img
+        f _                 = error "unsupported format"
+
 
 
 testImage = loadRGBA "../data/test-old.png"

@@ -10,16 +10,17 @@ import Codec.Picture
 import Codec.Picture.Repa               as C
 import EdgeDetect
 import qualified Vision.Image as I
+import ImageCorrelationCv
 --main :: IO ()
 
 main = do
-  mainCorr
+  mainCV
+
+mainCV = correlate "./data/object/base-balls.jpg" "./data/object/base-balls-kernel.jpg"
 
 mainCorr = do
-  x <- imageCorrelation 254 "./data/object/soccer-kernel.jpg" "./data/object/soccer_balls.jpg"
-  x' <- R.computeUnboxedP $ R.map fromIntegral x :: IO (R.Array R.U R.DIM2 Double)
-  print x'
-  let x'' = R.repaToGreyImage x'
+  x <- imageCorrelation 0.012 "./data/object/soccer_balls1.jpg" "./data/object/soccer-kernel1.jpg"
+  let x'' = R.repaToGreyImage x
   savePngImage "ImageCorrTest.png" (ImageY8 x'')
 
 --runs in about 20 seconds
