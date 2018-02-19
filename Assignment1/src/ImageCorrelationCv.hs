@@ -1,5 +1,3 @@
-{-# LANGUAGE QuasiQuotes, FlexibleContexts #-}
-
 module ImageCorrelationCv (
   correlate,
   testIO
@@ -9,10 +7,8 @@ import OpenCV.ImgProc.ObjectDetection
 import OpenCV.Juicy
 import ImageHelper
 import Codec.Picture.Types
-import OpenCV as C
 import Control.Monad.Except
 import qualified OpenCV as CV
-import qualified Data.ByteString as B
 
 cvMatrix8 = fmap (fromImage . extractLumaPlane) . loadRGBJPG
 
@@ -26,5 +22,3 @@ correlate arr ker = do
   case correlation of
     Left _ -> error "erorr in transformation"
     Right m -> CV.withWindow "test" $ \win -> CV.imshow win arr'
-
-testIO = loadRGBA "./data/object/base-balls-kernel.jpg"

@@ -14,12 +14,12 @@ import ImageCorrelationCv
 --main :: IO ()
 
 main = do
-  mainCV
+  mainCorr
 
 mainCV = correlate "./data/object/base-balls.jpg" "./data/object/base-balls-kernel.jpg"
 
 mainCorr = do
-  x <- imageCorrelation 0.012 "./data/object/soccer_balls1.jpg" "./data/object/soccer-kernel1.jpg"
+  x <- imageCorrelation 0.12 "./data/object/base-balls.jpg" "./data/object/base-balls-kernel.jpg" -- "./data/object/soccer_balls1.jpg" "./data/object/soccer-kernel1.jpg"
   let x'' = R.repaToGreyImage x
   savePngImage "ImageCorrTest.png" (ImageY8 x'')
 

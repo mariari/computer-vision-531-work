@@ -8,15 +8,9 @@ module ImageCorrelation (
 
 import RepaImage
 import Data.Array.Repa as R
-import Codec.Picture.Types
-import Data.Word
-import RepaHelper
 import Data.Array.Repa.Algorithms.Convolve as C
-import Control.Monad.Identity
 import Data.Array.Repa.Algorithms.Matrix
-import ImageHelper as I
 import qualified Data.Vector.Unboxed as V
-import Codec.Picture.Repa                as C
 
 -- Yay Ι don't have to figure out FFT's and DFT's just yet!
 -- we can do this without it
@@ -71,6 +65,6 @@ imageCorrelation min path1 path2 = do
 
 
 filterMin arr min = R.map f arr
-  where f x | x >= min  = x * 255
+  where f x | x >= min  = 255
             | otherwise = 0
 {-# INLINE filterMin #-}
