@@ -1,4 +1,3 @@
-
 * Edge Detecotr
 ** Sobel
 *** Describing Sobel

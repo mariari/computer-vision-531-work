@@ -1,0 +1,69 @@
+#+Author: Jeremy Ornelas
+* Information about ROC curves
+- In the case of feature detection the ROC curve is a way to visualize
+  the accuracy of said feature detection.
+  \\
+  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment1/data/curve/ROC-curve.png]]
+  + above is an example of such a curve
+  + the y axis displays the true positive rate.
+    * I.E. what is the percentage of your detector properly finding x
+      (if one's feature always spits out one, then all x's would
+      naturally be found).
+    * The x axis displays the false positive rate.
+      - I.E. this is the percentage of your detector mistakenly
+        calling any object an x when it isn't an x (if the detector
+        always spits out 0, then there is no chance).
+- We can view this graph in a slightly different way, in order to
+  get a different perspective on how this data can be represented, and
+  where the most optimal matching would be.\\
+  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment1/data/curve/IMG_20180221_202847.jpg]]
+  + Here we can view the vertical line as being the cut off point in
+    the classifier. In the curve above it would be a single point on
+    the line.
+    * The graph is rather intuitive, however one key point is where
+      the ideal bar should be, as overall we want the highest Accuracy
+      rating (which can be calculated by doing $\frac{TP + TN}{P +
+      N}$), and this point is where the two lines intersect. This will
+      become more relevant when we deal with deal with the gradient,
+      as classification will naturally come to this point
+* Generating and changing the ROC curve.
+- Since my code for 3 has some unknown errors that make it fault,
+  instead of displaying a correct graph I will instead talk about
+  strategies on how to move the bar, and strategies for generating the
+  curve.
+** Strategies to generate the ROC curve.
+- So we have no real way to generate the bars, as there is no ground
+  truth as what the image is outside of what the human can perceive
+  (at least with the methods we used to calculate object detection!).
+- So an easy way to generate the ROC curve is by looking at one's
+  classifier and manually filling out how many objects there are and how
+  many the curves misses. Now this only gives us a point, so to
+  generates the rest of the curve, one would have to move their
+  threshold, and from there the curve of one's classifier is formed.
+** Strategies to change the ROC curve.
+1. A relatively simple way is to change the template image used in the
+   classification.
+   - for example the classifier would shift the classifier to the
+     bottom left (the top right is more accurate) by having their
+     template image have more of the background.
+   - The converse is also true, if there is less background in the
+     image, then the classifier will be less likely to falsely say the
+     background is really our object of interest.
+2. Another way is to use filters on the image or the template image
+   - Using a filter on one but not the other could effect the ROC curve
+     of a naive detector like a template matcher, as it distors the
+     data in the image.
+   - However for a detector that is resistant to alpine changes, the
+     type of filter would have variable effect.
+     + The Gaussian family with small kernel sizes wouldn't have much
+       effect, since the overall structure is there.
+     + Even kernels that just add noise to the image in small doses
+       won't do much for the same reason described above.
+     + So one would have to find a type of filter that changes angles
+       and lines of the image, from there the ROC curve should move more
+       towards the bottom left.
+3. Changing the template picture to a different picture of the same
+   type
+   - If one changes a more common objects appearance to a more obscure
+     one, then the ROC curve should suffer (move bottom right) for a
+     simple detector (like the template matching in my notebook3).

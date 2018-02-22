@@ -1,4 +1,4 @@
-
+#+Author: Jeremy Ornelas
 * Information and Pitfalls in Feature detection
 
 ** Misconceptions
