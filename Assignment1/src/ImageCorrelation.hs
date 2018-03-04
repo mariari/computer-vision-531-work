@@ -54,7 +54,7 @@ normalizedConv arr ker = do
   R.computeUnboxedP $ R.map fn extracted
 
 
-imageCorrelation ::  Double -> FilePath -> FilePath -> IO (Array U DIM2 Double)
+imageCorrelation :: Double -> FilePath -> FilePath -> IO (Array U DIM2 Double)
 imageCorrelation min path1 path2 = do
   x     <- readIntoRepa path1 >>= toGreyP
   y     <- readIntoRepa path2 >>= toGreyP

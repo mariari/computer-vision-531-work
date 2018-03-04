@@ -95,7 +95,7 @@ filterPixelsS arr min = R.traverse arr id (passThresh min averaged)
     averaged           = R.sumS $ R.map (/ fromIntegral k) arr
 
 filterPixelsP :: (Monad m, Source r b, Fractional b, Ord b, V.Unbox b) => Array r DIM3 b -> b -> m (Array D DIM3 b)
-filterPixelsP arr min = (R.traverse arr id . passThresh min) <$> averaged
+filterPixelsP arr min = R.traverse arr id . passThresh min <$> averaged
   where
     (Z :. _ :. _ :. k) = R.extent arr
     averaged           = R.sumP $ R.map (/ fromIntegral k) arr
@@ -118,11 +118,3 @@ testIO = do
   print (z' ! (Z :. 1 :. 1 :. 0))
   print (z' ! (Z :. 1 :. 1 :. 1))
   print (z' ! (Z :. 1 :. 1 :. 2))
-  print (computeUnboxedS (slice z' (Z :. (1 :: Int) :. (1 :: Int) :. All)))
-  print (computeUnboxedS $ R.extract (Z :. 1 :. 1 :. 0) (Z :. 5 :. 1 :. 3) z')
-  let f x = R.computeUnboxedS (slice (repaExtractWindows 5 1 z') (Z :. (1 :: Int) :. (1 :: Int) :. All) ! (Z :. x))
-  print (f 0)
-  print (f 1)
-  print (f 2)
-  let z'' = repaToRGBImage z'
-  print $ pixelAt z'' 1 1

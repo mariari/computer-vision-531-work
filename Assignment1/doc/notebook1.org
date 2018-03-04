@@ -1,5 +1,4 @@
 #+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
-#+Author: Jeremy Ornelas
 * Overview of the Blurring filter
 ** What is a Blurring filter?
 - A blurring filter in this case is just a function that works on the

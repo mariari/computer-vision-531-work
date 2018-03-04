@@ -1,0 +1,1087 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>notebook1</title>
+<!-- 2018-03-01 Thu 22:51 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">notebook1</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Overview of the Blurring filter</a>
+<ul>
+<li><a href="#sec-1-1">1.1. What is a Blurring filter?</a></li>
+<li><a href="#sec-1-2">1.2. Types of Kernels</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1. Issues and Optimizations to the Kernel</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3. Dealing With Edge Cases</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Implementing the Blurring filter</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Matrix Representation</a>
+<ul>
+<li><a href="#sec-2-1-1">2.1.1. MatrixHelper</a></li>
+<li><a href="#sec-2-1-2">2.1.2. ImageHelper</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-2">2.2. Repa Representation</a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1. What is REPA and why did it take me to understand what Ι was doing</a></li>
+<li><a href="#sec-2-2-2">2.2.2. Working just on Grey images</a></li>
+<li><a href="#sec-2-2-3">2.2.3. Working on both grey and colored images</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Overview of the Blurring filter</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> What is a Blurring filter?</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li>A blurring filter in this case is just a function that works on the
+neighborhood of a pixel
+<ul class="org-ul">
+<li>this is also known as a linear filter
+</li>
+<li>can be expressed mathematically as \(g(i,j) = \sum_{k,l}f(i + k, j +l)h(k,l)\)
+<ul class="org-ul">
+<li>where \(g\) represents the new image
+</li>
+<li id="\(f\) is the original imageblurGausX">(Source r b, Fractional b) =&gt; Array r DIM2 b -&gt; Array D DIM2 b
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>
+blurGausY :: (Source r b, Fractional b) =&gt; Array r DIM2 b -&gt; Array D DIM2 b
+</p>
+<ul class="org-ul">
+<li>and \(h\) is the is the weight/kernel
+</li>
+<li>This operation is also considered f being convolved by h
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Types of Kernels</h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li>Not all Kernels produce a blurring filter, for example the Sobel
+kernel (shown below) is more useful for edge detection than for blurring
+<ul class="org-ul">
+<li>the following two are the x and y Sobel kernel respectively
+</li>
+</ul>
+</li>
+<li>Though there are a few filters that can work for blurring, Ι used
+the Gaussian filter which can be defined as such below
+<ul class="org-ul">
+<li>Gaussian \(= \frac{1}{256}\) ×
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Issues and Optimizations to the Kernel</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ul class="org-ul">
+<li>So the issue with the Gaussian filter above is that applying the
+convolution would take \(O(K^2)\) for every pixel of the image \(f\),
+which could turn out very slow.
+</li>
+<li>Thankfully there is a way to get this operation to \(O(2K)\), however
+the kernel matrix must be separable.
+</li>
+<li>So for the Gaussian filter above we can define it like this
+<ul class="org-ul">
+<li>\(v = \frac{1}{16}\) ×
+</li>
+<li>\(h = v\)
+</li>
+<li>Gausian \(= vh^T\)
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Dealing With Edge Cases</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li>So there is one more issue with the linear filter method, and that
+deals with the edge of the image matrix, as there may not be an
+up,left,right or down for any particular pixel.
+</li>
+<li>So there are a few schemas available, and I will outline the ones I tried
+<ul class="org-ul">
+<li>My first instinct was to fill the surrounding matrix with zeros, and
+then apply the transformation above. This is also known as the
+zero padding
+<ul class="org-ul">
+<li>for a very short while I even tried reducing how much each
+edge was divided by, as 0's don't add anything to the total, so
+I made a formulation that divided by the correct numbered multiplied.
+</li>
+<li>This formulation worked kind of well until I realized that
+GausBlurX \(\circ\) GausBlurY ≠ GausBlurY \(\circ\) GausBlurX. and thus the
+transformation really isn't separable
+</li>
+</ul>
+</li>
+<li>After reading the textbook for a bit I ended up deciding to go
+with clamp padding, which basically just repeats the edges on
+either side, so the calculation would more accurately represent
+the edges. Ι will talk more about how this is implemented in each
+section in the implementation section
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Implementing the Blurring filter</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>I did this exercise twice actually
+<ol class="org-ol">
+<li>With a Matrix Library
+<ul class="org-ul">
+<li><span class="underline">Pros</span>
+<ul class="org-ul">
+<li>this was quite easy to work with, as it abstracted the 1D vector
+</li>
+<li>Can use Purely
+</li>
+<li>has O(1) slices by just changing the internal bounds
+</li>
+</ul>
+</li>
+<li><span class="underline">Cons</span>
+<ul class="org-ul">
+<li>it did not give me proper access to create the type, so I had to
+rely on fusion to convert my image to the data type
+</li>
+<li>turned out to be slow when Ι promoted the Word8 (8-bit unsigned
+ℤ) to Word16 (16-bit unsigned ℤ). It went from a .11 second
+computation to never stopping believe it or not! (I figure it has
+something to do with caching rather than anything with 8-bit vs
+16 bit computation)
+<ul class="org-ul">
+<li>I ended up spending hours trying to investigate this
+problem and got nowhere
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>With the REPA Library
+<ul class="org-ul">
+<li><span class="underline">Pros</span>
+<ul class="org-ul">
+<li>Very fast, as they are automatically parallelized and use a lot
+of fusion
+</li>
+<li>Represented with pure data operations outside of forcing
+parallelism
+</li>
+<li>Abstracted out making the stencil and boundary clamp part of
+the problem
+</li>
+<li>Has an extension to work natively with the library that reads
+images (JuicyPixels)
+</li>
+</ul>
+</li>
+<li><span class="underline">Cons</span>
+<ul class="org-ul">
+<li>Very hard to understand at first
+<ul class="org-ul">
+<li>Took me hours to get what I was even doing
+</li>
+<li>Instead of a normal representation of nested vectors, it
+abstract out all details via a backwards list structure
+known as a shape
+</li>
+<li>Also all computation causes the vector to not exist until
+some action forces it, that way intermediate data
+structures are just left as functions and are fused out
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>and there was an even cooler way to implement this then the two listed
+above, and it deals with comonads and cellular automata, but that is
+something to be investigated at a later date
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Matrix Representation</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li>So using a Matrix representation for this problem was my first
+thought, and thankfully there is a library that has just that in Haskell.
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> MatrixHelper</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<ul class="org-ul">
+<li>before even bothering with converting an image, I wanted to make
+sure I was able to move a cursor throughout the entire image, so Ι
+decided to make the file "MatrixHelper.hs" which contains some
+useful tools
+</li>
+<li>The first tool that I created was
+<div class="org-src-container">
+
+<pre class="src src-haskell">extractWindows :: Int → Int → Matrix a → Matrix (Matrix a)
+extractWindows row col mat = matrix (nrows mat - row + 1) (ncols mat - col + 1) f
+  where
+    f (i,j) = submatrix i (i + row - 1) j (j + col - 1) mat
+</pre>
+</div>
+<ul class="org-ul">
+<li>The function takes a row, column and a matrix, and returns a Matrix
+containing sub matrices of the size of the row and column
+</li>
+<li>the size of the sub matrices are row x col and start from the top
+left moving to the right then finally down by 1 pixel each time
+</li>
+<li>taking sub matrices is thankfully \(O(1)\), as we never really create
+a new matrix, so really this operation is \(O((n-row) × (m-col))\)
+where n is the size of the rows and m is size of the columns and row and
+col are defined as they are in the function above
+</li>
+</ul>
+</li>
+<li>The other tools Ι created in this file aren't really useful for
+image blurring, but instead might prove useful for the letter
+detection. They aren't too useful as they don't pad the image, below
+is the code, however I won't explain
+<div class="org-src-container">
+
+<pre class="src src-haskell">linearFilter :: (RealFrac a, Integral b) ⇒ Matrix a → Matrix a → Matrix b
+linearFilter filt = fmap (round . sum . elementwise (*) filt) . extractWindows row col
+  where row = nrows filt
+        col = ncols filt
+
+(⊕) :: (RealFrac a, Integral b) ⇒ Matrix a → Matrix a → Matrix b
+(⊕) = flip linearFilter
+</pre>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> ImageHelper</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<ul class="org-ul">
+<li>now that I am able to move a cursor through the matrix, I now have
+to figure out how to read an image, and convert an image to a matrix
+representation. I ended up breaking this work into "ImageHelper.hs"
+<ul class="org-ul">
+<li><span class="underline">Reading and converting an image</span>
+<div class="org-src-container">
+
+<pre class="src src-haskell">testImage :: IO (Image PixelRGB8)
+testImage = do
+  img &lt;- readImage "../data/test-old.png"
+  case img of
+    Right (ImageRGB8 img) → return img
+    Left err → error ("can't load image: " &lt;&gt; err)
+    Right _ → error "unsupported format"
+</pre>
+</div>
+<ul class="org-ul">
+<li>Ι ended up deciding to go with JuicyPixels for all my image
+reading needs, here Ι read a RGB8 image, this isn't the most
+robust reader, since I later decided to do the matrix
+representation as all greyscale, I could probably read more
+formats and convert them here.
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-haskell">imageToGreyMatrix :: LumaPlaneExtractable a ⇒ Image a → Matrix (PixelBaseComponent a)
+imageToGreyMatrix img = matrix (imageWidth img) (imageHeight img) f
+where
+newImg  = extractLumaPlane img           -- turns the image into greyscale
+f (x,y) = pixelAt newImg (x - 1) (y - 1) -- matrix is 1 indexed not 0
+
+-- fusion does not happen, so this is slower than the non ' version
+imageToGreyMatrix' :: LumaPlaneExtractable a ⇒ Image a → Matrix (PixelBaseComponent (PixelBaseComponent a))
+imageToGreyMatrix' img = fromList (imageWidth img) (imageHeight img) newVec
+where
+newVec  = VS.toList . imageData . extractLumaPlane $ img
+</pre>
+</div>
+<ul class="org-ul">
+<li>the code above is two ways to turn an image into a matrix
+</li>
+<li>the first is rather straight forward as Ι use the <code>matrix</code>
+function to read create the matrix the same size as the image and
+just grab the pixel at each point after running a quick
+conversion to greyscale
+</li>
+<li>the second version was me being a bit cheeky, since Ι knew
+that the Matrix internally used a matrix representation, I
+thought I could just do VS.toList and fromList it, and have that
+fuse into 0 pass throughs, sadly it seemed it didn't work as
+intended and is slower (probably because I didn't inline the
+funcion for better analysis)
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>now that Ι read in the image, it's time to actually make the image
+blur and blur the image, I kept all this computation in ImageHelper.hs
+for some reason
+<ul class="org-ul">
+<li><span class="underline">Blurring the image</span>
+<div class="org-src-container">
+
+<pre class="src src-haskell">gausianConst :: Num a ⇒ [a]
+gausianConst = [1,4,6,4,1]
+
+blurSepX :: Matrix Word16 → Matrix Word16
+blurSepX mat =  withWord16 (* gausblur) &lt;$&gt; extracted
+  where
+    clampL    = colVector $ getCol 1           mat -- this gives us the
+    clampR    = colVector $ getCol (ncols mat) mat -- clamp border effect
+    buffered  = (clampL &lt;|&gt; clampL) &lt;|&gt; mat &lt;|&gt; (clampR &lt;|&gt; clampR)
+    extracted = extractWindows 1 5 buffered
+    gausblur  = fromList 5 1 gausianConst
+
+blurSepY :: Matrix Word16 → Matrix Word16
+blurSepY mat = withWord16 (gausblur *)  &lt;$&gt; extracted
+  where
+    clampU    = rowVector $ getRow 1           mat
+    clampD    = rowVector $ getRow (nrows mat) mat
+    buffered  = (clampU ↔ clampU) ↔ mat ↔ (clampD ↔ clampD)
+    extracted = extractWindows 5 1 buffered
+    gausblur  = fromUist 1 5 gausianConst
+
+withWord16 :: (Matrix Word16 → Matrix Word16) → Matrix Word16 → Word16
+withWord16 f mat = (`div` 16) . sum $ f mat16
+  where
+    mat16 = fromIntegral &lt;$&gt; mat :: Matrix Word16
+
+blur :: Matrix Word16 → Matrix Word8
+blur = fmap fromIntegral . blurSepY . blurSepX
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><span class="underline">GausianConst</span>
+<ul class="org-ul">
+<li>so this just mimics the h definition in part 1, Ι  end up
+converting this to a matrix in the computation below
+</li>
+</ul>
+</li>
+<li><span class="underline">blurSepX</span>
+<ul class="org-ul">
+<li>this is filter that blurs the image with the v<sup>T</sup> filter from
+part1. this is called blurX instead of blurY as we are getting
+5 by 1 slices of our matrix as seen in
+<code>extracted = extractWindows 5 1 buffered</code>. now buffered isn't
+our original matrix, instead it's our matrix but padded on the
+left and right with the leftmost and rightmost elements
+respectively. as discussed in part1 these are just clamps,
+originally Ι just had zeros on the edges, but Ι did not like the results
+</li>
+<li>I will discuss what <code>withWord16</code> does in the section below, as
+there is interesting optimizations happening there. However I
+will say that Ι do send the partial application of the matrix
+multiplication to <code>withWord16</code> as this is where the pixel
+value is calculated
+</li>
+</ul>
+</li>
+
+<li><span class="underline">blurSepY</span>
+<ul class="org-ul">
+<li>This is basically the same as blurSepX except we are working
+on vertical slices instead of horizontal slices (hence y and not x)
+</li>
+</ul>
+</li>
+
+<li><span class="underline">withWord16</span>
+<ul class="org-ul">
+<li>So this function is particular interesting, as this is where
+the matrix representation of the code breaks down. If Ιchanged
+all the bindings to <code>Word8</code> and get rid of the <code>mat16</code> line,
+then I would get rounding errors, as 88 * 6 = 16, and thus after
+calculating a matrix multiplication, we get a number between
+0-255 that gets divided by 16 after it leaving us with a range
+of 0-16 after rounding.
+</li>
+
+<li>However quickly converting an image with <code>Word8</code> math was really
+fast and I could even convert big images rather quickly, however
+when Ι converted that one section of computation to <code>Word16</code>
+the program stopped, and Ι could only convert small images
+</li>
+</ul>
+</li>
+
+<li><span class="underline">blur</span>
+<ul class="org-ul">
+<li>This function is rather simple, it's just the composition of
+the two other blurs, and this is what I will use to generate the
+images that will be under the next section
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>After Getting the blurring up, I had to convert the data type back
+to an image, which was once again quite simple
+<div class="org-src-container">
+
+<pre class="src src-haskell">matrixToGreyImg :: Pixel a =&gt; Matrix a -&gt; Image a
+matrixToGreyImg mat = generateImage f (ncols mat) (nrows mat)
+  where f i j = mat ! (i + 1, j + 1)
+</pre>
+</div>
+<ul class="org-ul">
+<li>this code really speaks for itself, ! is an index operation, and the
+matrix is 1 indexed not 0, so I had to add the (+1)'s
+</li>
+</ul>
+</li>
+<li><span class="underline">Other Issues</span>
+<ul class="org-ul">
+<li>Another issue besides the time of this interpretation is the
+amount of memory it consumes.
+</li>
+<li>this way of dealing with the image would load the entire image
+into memory, which is far from ideal, and we'll see in the REPΑ
+representation the memory usage stays low all throughout
+</li>
+</ul>
+</li>
+
+<li>Now that we finally have our Image → Matrix → Image code up we can
+finally convert some images!
+<ul class="org-ul">
+<li>shown below is the code Ι used to run the process
+<div class="org-src-container">
+
+<pre class="src src-haskell">mainMatrix :: IO ()
+mainMatrix = do
+  x &lt;- testImage
+  let new  = blur $ fmap fromIntegral (imageToGreyMatrix x)
+  let new' = matrixToGreyImg new
+  savePngImage "./test-2.png" (ImageY8 (matrixToGreyImg (imageToGreyMatrix x)))
+  savePngImage "./test.png" (ImageY8 new')
+</pre>
+</div>
+<ul class="org-ul">
+<li>we just run and save the image before blur and after blur
+<ul class="org-ul">
+<li>the far left one is the original fully colored, we'll see more
+of that one later
+</li>
+<li>the middle is the unaltered greyscale version of the image
+</li>
+<li>and finally the far right is the blurred version of this
+150x150px image;
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Repa Representation</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li>This representation comes from the fact that I wanted the code to
+run on the full 1500x1500 version of the images above, and I spent
+hours trying to debug why <code>Word16</code> slowed down the program so much.
+</li>
+<li>Repa also gives me tools to do this work rather easily, so I'll
+break this section into 3 parts
+<ol class="org-ol">
+<li>What is REPA and why did it take me to understand what Ι was doing
+</li>
+<li>Working just on Grey images
+</li>
+<li>Working on both grey and colored images
+</li>
+</ol>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> What is REPA and why did it take me to understand what Ι was doing</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<ul class="org-ul">
+<li>so REPA is a library for high performance regular multi-dimensional
+parallel arrays.
+</li>
+<li>This means a few things
+<ol class="org-ol">
+<li>we don't have to say a word about parallelism and our code will
+still be run in parallel (I ended up getting 100% on all 8 of my cores!)
+</li>
+<li>REPΑ is rather fast and memory efficient
+</li>
+<li>REPA due to its "multi-dimensional" nature has rather complex
+type signatures and makes grokking it rather hard at first
+</li>
+</ol>
+</li>
+<li>So REPA achieves its speed in a rather interesting way, whenever
+a function is invoked, REPA doesn't actually make an array
+<div class="org-src-container">
+
+<pre class="src src-haskell">a = fromListUnboxed (Z :. 4 :. 4) [1..16] :: Array U DIM2 Int
+R.map (+ 1) a :: Array D DIM2 Int
+</pre>
+</div>
+<ul class="org-ul">
+<li>so here we make an unboxed array (that's what U means) of dimension 4 by 4 (that's what
+Z :. &#x2026; means) with type Int inside.
+</li>
+<li>when we run map over the entire array instead of getting another
+Unboxed type U back, we instead get the type <code>Array D DIM2 Int</code>
+back, where D means that this array is really just functions from
+indices to elements. So the array never really exists in memory
+</li>
+<li>this is rather useful, as this map can be fused out and the
+intermediate arrays never exist
+</li>
+</ul>
+</li>
+<li>Another note is the shape, the (Z :. 4 :. 4) notation denotes the
+shape of the array, and this data structure is best to be thought of
+as a reverse list
+</li>
+<li>even with understanding both of these points, it took me more than
+just a few hours to fully understand how to use the library, and in
+the following two sections I'll try to explain the logic of what is happening.
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Working just on Grey images</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<ul class="org-ul">
+<li>so like the matrix representation Ι decided to once again only work
+on grey images at first
+</li>
+<li>the code for both these sections are in RepaHelper.hs
+</li>
+<li>The first step was trying to figure out how to turn an Image into a
+Repa array.
+<div class="org-src-container">
+
+<pre class="src src-haskell">-- only going to be working on 2D images for now, trying to figure out slices is too much
+imageToGreyRepa :: LumaPlaneExtractable a ⇒ Image a → Array D DIM2 (PixelBaseComponent a)
+imageToGreyRepa img@(Image w h _) = R.fromFunction (Z :. w :. h) f
+  where f (Z :. i :. j) = pixelAt newImg i j
+        newImg          = extractLumaPlane img
+</pre>
+</div>
+<ul class="org-ul">
+<li>so I end up representing a grey image as a 2D array (DIM2 stands
+for dimension 2).
+</li>
+<li>I do this by making a function that takes an image (an image
+consists of the width, height, and data) which we call img with
+width w and height h, and returning our array
+</li>
+<li>this array never really gets materialized, as we just make the
+array from a function that just queries the greyed version of the image
+</li>
+</ul>
+</li>
+<li>Now that we have the image in the data that we can work with, we
+must now make our Gaussian once again
+<div class="org-src-container">
+
+<pre class="src src-haskell">gausianStencilX :: Num a ⇒ Stencil DIM2 a
+gausianStencilY :: Num a ⇒ Stencil DIM2 a
+gausianStencilX = [stencil2| 1 4 6 4 1 |]
+gausianStencilY = [stencil2| 1
+                             4
+                             6
+                             4
+                             1 |]
+</pre>
+</div>
+<ul class="org-ul">
+<li>this code is a bit special. So Repa has a stencil library that was
+made to basically apply any arbitrary kernel as long as it's
+smaller than 7x7
+</li>
+<li>so these two represent the Gaussian and give other data to our
+function below
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-haskell">blurGausX :: (Source r b, Fractional b) ⇒ Array r DIM2 b → Array D DIM2 b
+blurGausY :: (Source r b, Fractional b) ⇒ Array r DIM2 b → Array D DIM2 b
+blurGausX = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilX
+blurGausY = R.map (/ 16) . mapStencil2 BoundClamp gausianStencilY
+
+blur :: (Source r b, Fractional b) ⇒ Array r DIM2 b → Array D DIM2 b
+blur = blurGausX . blurGausY
+</pre>
+</div>
+<ul class="org-ul">
+<li>The library is kind enough to give us a mapStencil over a 2D
+array, so really we just map the Gaussian and then divide by 16, and compose
+both of them to get the blur
+</li>
+
+<li>The stencil probably runs in parallel, though I'm not quite sure
+where the parallelization is coming from (might be even before
+this point!)
+</li>
+</ul>
+</li>
+
+<li>So now that we have the blur filter working, we just have to make a
+conversion function then run it
+<div class="org-src-container">
+
+<pre class="src src-haskell">repaToGreyImage :: (RealFrac a, Source r a) ⇒ Array r DIM2 a → Image Word8
+repaToGreyImage xs = generateImage create width height
+  where Z :. width :. height = R.extent xs
+        create i j           = round (xs ! (Z :. i :. j)) :: Word8
+</pre>
+</div>
+<ul class="org-ul">
+<li>once again we use generateImage and grab the proper coordinates
+</li>
+</ul>
+</li>
+
+<li>So now lets run the image blur again but on a bigger version of the
+same image!
+<div class="org-src-container">
+
+<pre class="src src-haskell">mainRepaGrey = do
+  x &lt;- testImage
+  let y = R.imageToGreyRepa x
+  let z = R.blur $ R.map fromIntegral y
+  savePngImage "./repa-test-real.png" (ImageY8 (R.repaToGreyImage z))
+</pre>
+</div>
+<ul class="org-ul">
+<li>this code basically grabs the image and runs our functions
+</li>
+<li>and once again we save the pngs which can be viewed below
+</li>
+<li>I've had to scale the image down for the PDF, so do use my
+directories and look at "repa-big-test" and "test-big"
+</li>
+<li>So the image on the left below is the original
+</li>
+<li>And the image on the right is the blurred version
+</li>
+<li>I ended up scaling the images to .4, as the blurring is more
+subtle on bigger image
+</li>
+<li></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> Working on both grey and colored images</h4>
+<div class="outline-text-4" id="text-2-2-3">
+<ul class="org-ul">
+<li>this section in particular took a lot of effort as it took me quite
+a while to grok how slices work in this library and how to properly
+use the tools
+</li>
+<li>Reading an image to a REPA array is already done for me as there is
+a <code>readImageRGB</code> function provided in JuicyPixels-repa, so I don't
+have to worry about that part
+</li>
+<li>to get a grip on the tools, I thought Ι would make
+repaExtractWindows which really isn't used
+<div class="org-src-container">
+
+<pre class="src src-haskell">repaExtractWindows :: (Source r a) =&gt; Int -&gt; Int -&gt; Array r DIM3 a -&gt; Array D DIM3 (Array D DIM3 a)
+repaExtractWindows row col arr = R.fromFunction (Z :. i - row :. j - col :. k) grabsubs
+  where Z :. i :. j :. k = R.extent arr
+        grabsubs sh      = R.extract sh (Z :. row :. col :. 1) arr
+</pre>
+</div>
+<ul class="org-ul">
+<li>I made this as I was confused on how to get subsection of the
+array properly. At first <code>R.fromFunction</code> used to be <code>R.traverse</code>
+that took an array and did some calculations, but it turned out to not
+be needed
+</li>
+<li>there is a nifty function called extract which I can give it a
+shape of where to start and how big it is.
+</li>
+</ul>
+</li>
+<li>Now that Ιwas understanding what I was doing, we can now make
+blurCol
+<div class="org-src-container">
+
+<pre class="src src-haskell">data MyImage a = RGB a a a | RGBA a a a a | Grey a
+
+fromList :: [a] -&gt; MyImage a
+fromList [a,b,c]   = RGB a b c
+fromList [a,b,c,d] = RGBA a b c d
+fromList [a]       = Grey a
+fromList _         = error "not a valid image"
+
+blurCol :: (Fractional e, Source r e) =&gt; Array r DIM3 e -&gt; Array D DIM3 e
+blurCol = flip reshape . f . fromList . fmap blur . slices &lt;*&gt; R.extent
+  where f (RGBA a b c d) = interleave4 a b c d
+        f (RGB a b c)    = interleave3 a b c
+        f (Grey a)       = a
+
+slices :: Source r e =&gt; Array r DIM3 e -&gt; [Array D DIM2 e]
+slices arr = f &lt;$&gt; [0..(k-1)]
+  where
+    (Z :. _ :. _ :. k) = R.extent arr
+    f a                = slice arr (Z :. All :. All :. (a :: Int))
+</pre>
+</div>
+<ul class="org-ul">
+<li>I broke this function up into 3 discrete pieces, my custom data
+type, blurCol, and slices
+
+<ul class="org-ul">
+<li><span class="underline">Slices</span>
+<ul class="org-ul">
+<li>slices takes an array and stuffs the 3rd dimension of the array
+into its own list while keeping all x and y coordinates of the array
+</li>
+<li>this leaves us with a list of 2D arrays, which means the old
+blur filter can work
+</li>
+</ul>
+</li>
+<li><span class="underline">MyImage</span>
+<ul class="org-ul">
+<li>this data type was mostly a response to the interleave
+functions. due to how strict Haskell is with its types Ι can't
+just check the size of the list I get from slices and decide on
+which one I want
+</li>
+<li>so I created this data type just to facilitate the interleave
+functionality
+<ul class="org-ul">
+<li>interleave just interleaves all elements in the arrays given
+to it
+</li>
+</ul>
+</li>
+<li>Also note at first I used R.++ instead, but that ended up
+splitting they image into 3 versions of the original image
+</li>
+</ul>
+</li>
+<li><span class="underline">blurCol</span>
+<ul class="org-ul">
+<li>blurCol is where the magic happens, now that we have 2D
+slices, we can now just call blur on each slice and combine it
+with interleave. Finally we get a 2D array back, so we just
+reshape the array into a 3rd dimensional one
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+
+<li>All that is left is converting the array into a 3D one. there is
+actually a function called <code>imgToImage :: Img a → DynamicImage</code> but
+oddly enough it segfaults (it uses some weird foreign pointer
+magic), so I made my own once again
+<div class="org-src-container">
+
+<pre class="src src-haskell">repaToRGBImage :: (RealFrac a, Source r a) ⇒ Array r DIM3 a → Image PixelRGB8
+repaToRGBImage arr = generateImage create height width -- may have mixed up the width and height at some point
+  where
+    Z :. width :. height :. _ = R.extent arr
+    create i j                = PixelRGB8 (grab 0) (grab 1) (grab 2)
+      where grab k = round $ arr ! (Z :. j :. i :. k) :: Word8
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>So this code looks a lot like the grey image converter, however
+there is one weird difference, and that is in the generate image I
+give it height then width, and Ι index my array with j then i
+instead of i then j. I think something might have been flipped at
+once point, I'm not too sure, but this works like a charm.
+</li>
+
+<li>A previous version used to use foldl1 with the PixelRGB8 and keeping
+the computation in the list, but since Ιused the wrong fold, I
+ended up mixing up R and B on the final image which I will show with
+the rest.
+</li>
+</ul>
+</li>
+
+<li>So now lets run and see what we get!
+<div class="org-src-container">
+
+<pre class="src src-haskell">main = do
+  x &lt;- C.readImageRGB "./data/Color-test.png"
+  let y = case x of Left _ -&gt; error "image not found"; Right z -&gt; z
+  let z = R.blurCol (R.map fromIntegral (imgData y))
+  z' &lt;- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
+  let z'' = R.repaToRGBImage z'
+  savePngImage "./Color-save.png" (ImageRGB8 z'')
+</pre>
+</div>
+<ul class="org-ul">
+<li>the computeUnboxedP is the only parallel code I've written, which
+just tells the array to be computed in parallel, idk if this
+speeds up the computation however.
+</li>
+<li>but lets see the fruits of our labor. I would suggest looking in
+the data director and look at "Color-test"
+"Color-save-proper-colors" and "Color-save-proper-colors" for the
+full size images
+</li>
+<li>the left is the original
+</li>
+<li>the right was the mistaken R B flip and blurred
+</li>
+<li>and the bottom is the blurred version of the first
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2018-03-01 Thu 22:51</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
