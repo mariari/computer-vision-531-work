@@ -1,0 +1,64 @@
+% Created 2018-03-05 Mon 15:05
+\documentclass{article}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\date{\today}
+\title{Notebook1}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.3.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Mathematical Description of the Discrete Cosine Transform}
+\label{sec-1}
+\begin{enumerate}
+\item Brief Overview
+\label{sec-1-1}
+\begin{itemize}
+\item The Discrete cosine transform can represent an image as a sum of
+sinusoids with frequencies and magnitudes that differ.
+\item The Cosine transform has the property that most of the important
+bits of information with an image (or even an audio wave) is
+concentrated (Notebook 2 will expand on this idea).
+\item Due to this property, the DCT (or the Modified discrete cosine transofrm)
+is used to MP3 compression and for JPG compression.
+\end{itemize}
+\item The Equation
+\label{sec-1-2}
+\begin{itemize}
+\item The Two dimensional DCT of an M-by-N matrix can be expressed as
+follows. \\
+  C$_{\text{pq}}$ = α$_{\text{p}}$α$_{\text{q}}$ $\sum^{M-n}_{m = 0}\sum^{N-1}_{n = 0} A_{mn}\cos\frac{π(2m + 1)p}{2M}\cos\frac{π(2n + 1)q}{2N}$
+\\ $\quad{}$ where
+\\ $\quad{} \quad{}$ 0 ≤ p ≤ M - 1
+\\ $\quad{} \quad{}$ 0 ≤ q ≤ N - 1
+\\ $\quad{} \quad{}$ α$_{\text{p}}$ = $\begin{cases} 1/\sqrt{M} & p = 0 \\
+                                            \sqrt{2/M} & 1 ≤ p ≤ M-1
+                               \end{cases}$
+\\ $\quad{} \quad{}$ α$_{\text{q}}$ = $\begin{cases} 1/\sqrt{N} & p = 0 \\
+                                            \sqrt{2/N} & 1 ≤ q ≤ N-1
+                               \end{cases}$
+\item We can note that if we assign p = n and q = n, they both fit the domain of p and q, and I will be using this for the program
+\end{itemize}
+\end{enumerate}
+% Emacs 25.3.1 (Org mode 8.2.10)
+\end{document}

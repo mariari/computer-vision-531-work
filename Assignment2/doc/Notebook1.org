@@ -1,0 +1,24 @@
+
+* Mathematical Description of the Discrete Cosine Transform
+** Brief Overview
+- The Discrete cosine transform can represent an image as a sum of
+  sinusoids with frequencies and magnitudes that differ.
+- The Cosine transform has the property that most of the important
+  bits of information with an image (or even an audio wave) is
+  concentrated (Notebook 2 will expand on this idea).
+- Due to this property, the DCT (or the Modified discrete cosine transofrm)
+  is used to MP3 compression and for JPG compression.
+** The Equation
+- The Two dimensional DCT of an M-by-N matrix can be expressed as
+  follows. \\
+  C_{pq} = α_{p}α_{q} $\sum^{M-n}_{m = 0}\sum^{N-1}_{n = 0} A_{mn}\cos\frac{π(2m + 1)p}{2M}\cos\frac{π(2n + 1)q}{2N}$
+  \\ $\quad{}$ where
+  \\ $\quad{} \quad{}$ 0 ≤ p ≤ M - 1
+  \\ $\quad{} \quad{}$ 0 ≤ q ≤ N - 1
+  \\ $\quad{} \quad{}$ α_p = $\begin{cases} 1/\sqrt{M} & p = 0 \\
+                                            \sqrt{2/M} & 1 ≤ p ≤ M-1
+                               \end{cases}$
+  \\ $\quad{} \quad{}$ α_q = $\begin{cases} 1/\sqrt{N} & p = 0 \\
+                                            \sqrt{2/N} & 1 ≤ q ≤ N-1
+                               \end{cases}$
+- We can note that if we assign p = n and q = n, they both fit the domain of p and q, and I will be using this for the program
