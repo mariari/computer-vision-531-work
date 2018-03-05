@@ -1,5 +1,5 @@
 module Plotting
-  (
+  (plotDCT
   ) where
 
 import Graphics.Rendering.Plot.HMatrix
@@ -11,8 +11,8 @@ import Misc
 
 -- the fmap ((-1) :) . (<> [-1]) is for padding the top and bottom
 -- this pads the left and right (padList <>) . (<> padList)
-plotDCT :: IO ()
-plotDCT = imshow (fromBlocks (fromLists <$$> padded))
+plotDCT :: Int -> IO ()
+plotDCT n = imshow (fromBlocks (fromLists <$$> padded))
   where padded     = fmap (((-1) :) . (<> [-1])) . (padList <>) . (<> padList) <$$> normalized
-        padList    = [replicate 8 (-1)]
-        normalized = normalizeValues Zeroc <$$> eightByEight
+        padList    = [replicate n (-1)]
+        normalized = normalizeValues Zeroc <$$> nbyN n

@@ -1,10 +1,13 @@
 module Cosine
     (dcBasis
+    , nbyN
     , eightByEight
     ) where
 
 import Data.List.Split
 import Normalize
+import Control.Applicative
+import Data.Matrix
 
 dcBasis :: (Floating p1, Eq p1) => p1 -> p1 -> Int -> Int -> [[p1]]
 dcBasis p q m n = chunksOf n $ (*) . (αpq *) <$> ti <*> tj
@@ -18,5 +21,8 @@ dcBasis p q m n = chunksOf n $ (*) . (αpq *) <$> ti <*> tj
         ti               = f p mfloat . fromIntegral <$> [0..(n-1)]
         tj               = f q nfloat . fromIntegral <$> [0..(m-1)]
 
+nbyN :: (Floating a, Eq a, Enum a) => Int -> [[[[a]]]]
+nbyN n = chunksOf n $ (\x y -> dcBasis x y n n) <$> [0..(fromIntegral n-1)] <*> [0..(fromIntegral n-1)]
+
 eightByEight :: [[[[Double]]]]
-eightByEight = chunksOf 8 $ (\x y -> dcBasis x y 8 8) <$> [0..7] <*> [0..7]
+eightByEight = nbyN 8

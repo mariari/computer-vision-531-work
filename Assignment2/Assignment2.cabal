@@ -51,6 +51,7 @@ executable Assignment2-exe
     , split
     , plot-gtk
     , mtl
+    , matrix
     , hmatrix
     , base >=4.7 && <5
   other-modules:
