@@ -49,7 +49,9 @@ executable Assignment2-exe
     , JuicyPixels
     , JuicyPixels-repa >= 0.7.1.0
     , split
+    , plot-gtk
     , mtl
+    , hmatrix
     , base >=4.7 && <5
   other-modules:
       Paths_Assignment2

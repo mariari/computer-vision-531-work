@@ -30,6 +30,9 @@ resolver: lts-10.7
 extra-deps:
   - JuicyPixels-repa-0.7.1.0
   - friday-juicypixels-0.1.2.3
+  - plot-gtk-0.2.0.4
+  - gtk-0.14.7
+  - gio-0.13.4.1
 #  subdirs:
 #  - auto-update
 #  - wai
