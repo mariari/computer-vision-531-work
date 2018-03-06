@@ -5,9 +5,6 @@ module Cosine
     ) where
 
 import Data.List.Split
-import Normalize
-import Control.Applicative
-import Data.Matrix
 
 dcBasis :: (Floating p1, Eq p1) => p1 -> p1 -> Int -> Int -> [[p1]]
 dcBasis p q m n = chunksOf n $ (*) . (αpq *) <$> ti <*> tj
