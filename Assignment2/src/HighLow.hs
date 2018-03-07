@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes, FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts #-}
 module HighLow
   (repaIDct,
    repaDct,
@@ -6,12 +6,12 @@ module HighLow
    lowPass,
    computeAbsDiff
   ) where
-import            Data.Monoid
-import            Data.Array.Repa.Repr.Vector
-import            Data.Array.Repa as R
-import            Statistics.Transform -- This failed me
-import qualified  Data.Vector as V
-import            Foreign.Storable
+import           Data.Monoid
+import           Data.Array.Repa.Repr.Vector
+import           Data.Array.Repa as R
+import           Statistics.Transform -- This failed me
+import qualified Data.Vector as V
+import           Foreign.Storable
 import qualified Data.Array.CArray as C
 import qualified Data.Array.IArray as Arr
 import           RepaImage as RI
