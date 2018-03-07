@@ -1,7 +1,10 @@
 {-# LANGUAGE QuasiQuotes, FlexibleContexts #-}
 module HighLow
   (repaIDct,
-   repaDct
+   repaDct,
+   highPass,
+   lowPass,
+   computeAbsDiff
   ) where
 import            Data.Monoid
 import            Data.Array.Repa.Repr.Vector
@@ -33,9 +36,8 @@ testsame = (round <$> toList (id vec)) == [1,2,3,4]
 genPass :: (Source r b, Num b) => (Int -> Int -> Bool) -> Int -> Array r DIM2 b -> Array D DIM2 b
 genPass (<>) n arr = R.traverse arr id shrink
   where shrink f sh@(Z :. i :. j)
-          | i <> n || j <> n = f sh
+          | i <> n && j <> n = f sh
           | otherwise       = 0
-
 
 lowPass :: (Source r b, Num b) => Int -> Array r DIM2 b -> Array D DIM2 b
 lowPass = genPass (<=)
@@ -45,13 +47,13 @@ highPass = genPass (>=)
 
 computeAbsDiff file passedName filter num = do
   x <- readIntoRepa file
-  y <- computeVectorP $ R.map fromIntegral (repaRGBToGrey x) :: IO (Array V DIM2 Double)
+  y <- computeVectorP $ R.map (fromIntegral . (- ) 128) (repaRGBToGrey x) :: IO (Array V DIM2 Double)
 
   let cosY = repaDct y
   let fileName = passedName <> "-" <> show num <> ".png"
 
-  passThrough <- computeVectorP (filter num cosY) >>= computeUnboxedP . R.map id . repaIDct
-  difference  <- R.computeUnboxedP $ R.map abs (y -^ passThrough)
+  passThrough <- computeVectorP (filter num cosY) >>= computeUnboxedP . R.map (+ 128) . repaIDct
+  difference  <- R.computeUnboxedP $ R.map (abs . (+ 128)) (y -^ passThrough)
 
   saveRepaGrey fileName passThrough
   saveRepaGrey ("abs-diff-" <> fileName) difference
