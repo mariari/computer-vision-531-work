@@ -30,8 +30,22 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , vector
+    , repa >= 3.4.1.2
+    , repa-algorithms
+    , JuicyPixels
+    , JuicyPixels-repa >= 0.7.1.0
+    , split
+    , plot-gtk
+    , mtl
+    , matrix
+    , hmatrix
+    , statistics
   exposed-modules:
       Plotting
+      Cosine
+      Misc
+      Normalize
   other-modules:
       Paths_Assignment2
   default-language: Haskell2010
@@ -53,19 +67,10 @@ executable Assignment2-exe
     , mtl
     , matrix
     , hmatrix
-    , base >=4.7 && <5
-  other-modules:
-      Paths_Assignment2
-  default-language: Haskell2010
-
-test-suite Assignment2-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  hs-source-dirs:
-      test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      Assignment2
+    , statistics
+    , array
+    , carray
+    , fft
     , base >=4.7 && <5
   other-modules:
       Paths_Assignment2

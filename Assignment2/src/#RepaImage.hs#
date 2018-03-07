@@ -45,5 +45,5 @@ repaRGBToGrey arr = R.traverse arr (\_ -> ix2 i j) average
         getAll3 (Z :. i :. j) = (\k -> Z :. i :. j :. k) <$> [0..2]
         average f sh          = round $ sum (fromIntegral . f <$> getAll3 sh) / 3
 
-saveRepaGrey :: (RealFrac a, Source r a) => FilePath -> Array r DIM2 a -> IO ()
+saveRepaGrey :: (RealFrac a, Source r a) => FilePath -> Array r hhDIM2 a -> IO ()
 saveRepaGrey loc = savePngImage loc . ImageY8 . repaToGreyImage
