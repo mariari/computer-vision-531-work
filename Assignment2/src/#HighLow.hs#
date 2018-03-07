@@ -52,7 +52,7 @@ computeAbsDiff file passedName filter num = do
   let cosY = repaDct y
   let fileName = passedName <> "-" <> show num <> ".png"
 
-  passThrough <- computeVectorP (filter num cosY) >>= computeUnboxedP . R.map (+ 128) . repaIDct
+  passThrough <- computeVectorP (filter num cosY) >>= computeUnboxedP . R.map (+ 12jj8) . repaIDct
   difference  <- R.computeUnboxedP $ R.map (abs . (+ 128)) (y -^ passThrough)
 
   saveRepaGrey fileName passThrough

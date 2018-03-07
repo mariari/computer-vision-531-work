@@ -100,7 +100,7 @@
   #+BEGIN_SRC haskell
     computeAbsDiff file passedName filter num = do
       x ← readIntoRepa file
-      y ← computeVectorP $ R.map (fromIntegral ∘ (- ) 128) (repaRGBToGrey x)
+      y ← computeVectorP $ R.map (fromIntegral ∘ (+ (- 128)) (repaRGBToGrey x)
 
       let cosY = repaDct y
       let fileName = passedName <> "-" <> show num <> ".png"
@@ -136,19 +136,19 @@
   \\
   [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/low-10/girllow-10.png]]
   + so this is the low pass filter with n = 10
-  + Notice how we keep the overall feeling of the girl
+  + Notice how we keep the overall outline of the girl
   + overall not that great on this object
   [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/low-10/abs-diff-girllow-10.png]]
   + here is the absolute difference between the original image and the
     low pass filter
-  + This confirms that a large splat of the differences was missed
+  + Notice all the detail that was left out of the lowPass
 - =computeAbsDiff "data/army.jpg" "girlhigh" highPass 10= \\
-  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/high-40/girlhigh-40.png]]
+  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/high-10/girlhigh-10.png]]
   \\
   + here Ι run the high pass algorithm with zeroing out everything
-    passed 40
+    passed 10
   + Quite a lot of the detail is captured
-  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/high-40/abs-diff-girlhigh-40.png]]
+  [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/girl/high-10/abs-diff-girlhigh-10.png]]
   + This is the difference between the two images, and as can be seen,
     the overall structure of her hair is formed in the difference
     demonstrating that bit of information is missed
@@ -160,26 +160,32 @@
 - _70 tests_
   + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/bunyhigh-70.png]]
     + Here we can see the high pass filter on the bunny, it keeps the
-      nice fine details but overall loses the shape
+      nice fine details but overall we lose the shape outside of the
+      sharp details.
   + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/abs-diff-bunyhigh-70.png]]
-    + The absolute difference confirms this as the details of the
-      claws and fur are missing while the overall shape was is retained
-  + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/bunylow-70.png
-    + as we can see the overall shape of the bunny is kinda reserved
+    + The absolute difference confirms that pretty much most
+      information is lost
+  +
+    file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/bunylow-70.png
+    + This is the lowPass Filter on the bunny with 20
+    + as we can see the overall shape of the bunny is kinda reserved,
+      but all fine detials are missing
   + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/abs-diff-bunylow-70.png
-    + Lot of the detail of the fur is still intact
+    + The Absolute difference confirms this as, as the absolute
+      difference contains a lot of detail
 - _20 tests_
   + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/bunyhigh-20.png]]
     + this is the high pass filter on the bunny, but instead with a
       size of 20, compared to 70 more details can be seen and the bunny
-      is starting to look whole
+      is starting to look a lot better outlined than with 20
   + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/abs-diff-bunyhigh-20.png]]
     + This is the absolute difference, compared to the 70 this is a
-      lot more blurry and disjoint, with only the general shape being lost
+      lot more blurry and disjoint, with only parts of the general shape
+      being missing
   + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/bunylow-20.png
     + This is the low pass filter with 20, compared to 70 pretty much
       all detail is gone and only the general shape being intact
   + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/abs-diff-bunylow-20.png
     + This is the absolute difference, as can be noticed, the detail
-      of the bunny is much greater
+      of the bunny is much greater.
 

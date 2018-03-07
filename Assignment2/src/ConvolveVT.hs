@@ -27,12 +27,20 @@ pad val sh vec = fromFunction sh makePad
       | x >= i || y >= j = val
       | otherwise      = vec ! sh
 
+padOff :: (Source r e) => e -> DIM2 -> Array r DIM2 e -> Int -> Int -> Array D DIM2 e
+padOff val sh vec offx offy = fromFunction sh makePad
+  where
+    Z :. i :. j = R.extent vec
+    makePad sh@(Z :. x :. y)
+      | x - offx >= i || x - offx < 0 || y - offy >= j || y - offy < 0 = val
+      | otherwise      = vec ! ix2 (x - offx) (y - offy)
+
 testDiff path = do
   img       <- readIntoRepa path
-  origV     <- computeVectorP $ R.map fromIntegral (repaRGBToGrey img) :: IO (Array V DIM2 Double)
-  origU     <- computeUnboxedP (delay origV)
+  origV     <- computeVectorP $ R.map ((+ (-128)) . fromIntegral) (repaRGBToGrey img) :: IO (Array V DIM2 Double)
+  origU     <- computeUnboxedP (R.map (+ 128) origV)
   convolved <- convolveOutP outClamp gausian origU
-  let convolvedC = repaDct (computeVectorS (delay convolved))
+  let convolvedC = repaDct (computeVectorS (R.map (+ (-128)) convolved))
 
   let cosOrigV = repaDct origV
   let cosOrigU = computeUnboxedS (delay cosOrigV)
@@ -42,8 +50,9 @@ testDiff path = do
 
   matrixMultC <- computeUnboxedP (cosOrigV *^ paddedGausU)
   -- convert it back with idct
-  let matrixMult = repaIDct (computeVectorS (delay matrixMultC))
-
+  let matrixMult = R.map (+ 128) $ repaIDct (computeVectorS (delay matrixMultC))
+  saveRepaGrey "test.png" matrixMult
+  saveRepaGrey "test2.png" convolved
   print ("difference in the DCT "         <> (show (meanDiff matrixMultC convolvedC)))
   print ("difference in the NormalPlane " <> (show (meanDiff matrixMult convolved)))
   return convolved
