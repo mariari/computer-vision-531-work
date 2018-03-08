@@ -15,21 +15,11 @@ import           Foreign.Storable
 import qualified Data.Array.CArray as C
 import qualified Data.Array.IArray as Arr
 import           RepaImage as RI
-
-repaVecComp :: Shape sh => (V.Vector e1 -> V.Vector e2) -> Array V sh e1 -> Array V sh e2
-repaVecComp f arr = fromVector (R.extent arr) (f (toVector arr))
-
-repaDct :: Shape sh => Array V sh Double -> Array V sh Double
-repaDct = repaVecComp dct
-
--- For some reason repaDct . repaIDct doesn't give me the identity
--- Ι have to divide it by twice the length
-repaIDct :: Shape sh => Array V sh Double -> Array V sh Double
-repaIDct = repaVecComp ((\v -> fmap (/ (fromIntegral (length v) * 2)) v) . idct)
+import           RepaFilters
 
 testsame :: Bool
 testsame = (round <$> toList (id vec)) == [1,2,3,4]
-  where id  = repaIDct . repaDct
+  where id  = repaIDctImage . repaDctImage
         vec = fromVector (ix2 2 2) (V.fromList [1,2,3,4])
 
 
@@ -47,13 +37,13 @@ highPass = genPass (>=)
 
 computeAbsDiff file passedName filter num = do
   x <- readIntoRepa file
-  y <- computeVectorP $ R.map ((+ (-128)) . fromIntegral) (repaRGBToGrey x) :: IO (Array V DIM2 Double)
+  y <- computeVectorP $ R.map fromIntegral (repaRGBToGrey x) :: IO (Array V DIM2 Double)
 
-  let cosY = repaDct y
+  let cosY = repaDctImage y
   let fileName = passedName <> "-" <> show num <> ".png"
 
-  passThrough <- computeVectorP (filter num cosY) >>= computeUnboxedP . R.map (+ 128) . repaIDct
-  difference  <- R.computeUnboxedP $ R.map (abs . (+ 128)) (y -^ passThrough)
+  passThrough <- repaIDctImageP (filter num cosY) >>= computeUnboxedP . delay
+  difference  <- R.computeUnboxedP $ R.map abs (y -^ passThrough)
 
   saveRepaGrey fileName passThrough
   saveRepaGrey ("abs-diff-" <> fileName) difference

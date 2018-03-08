@@ -3,9 +3,10 @@ module ConvolveVt
   (
   ) where
 
-import Data.Monoid
+import RepaImage
 import HighLow
-import RepaImage as RI
+import RepaFilters
+import Data.Monoid
 import Data.Array.Repa as R
 import Data.Array.Repa.Repr.Vector
 import Data.Array.Repa.Algorithms.Matrix as RM
@@ -36,26 +37,25 @@ padOff val sh vec offx offy = fromFunction sh makePad
       | otherwise      = vec ! ix2 (x - offx) (y - offy)
 
 testDiff path = do
-  img       <- readIntoRepa path
-  origV     <- computeVectorP $ R.map ((+ (-128)) . fromIntegral) (repaRGBToGrey img) :: IO (Array V DIM2 Double)
-  origU     <- computeUnboxedP (R.map (+ 128) origV)
-  convolved <- convolveOutP outClamp gausian origU
-  let convolvedC = repaDct (computeVectorS (R.map (+ (-128)) convolved))
+  img         <- readIntoRepa path
+  let origV    = R.map fromIntegral (repaRGBToGrey img)
+  origU       <- computeUnboxedP origV
+  convolved   <- convolveOutP outClamp gausian origU
+  convolvedC  <- repaDctImageP . delay $ convolved
 
-  let cosOrigV = repaDct origV
+  cosOrigV    <- repaDctImageP origV
   let cosOrigU = computeUnboxedS (delay cosOrigV)
 
   paddedGausV <- computeVectorP $ pad 0 (R.extent cosOrigU) gausian
-  paddedGausU <- computeUnboxedP (delay $ repaDct paddedGausV)
+  paddedGausU <- computeUnboxedP (delay $ repaDct paddedGausV) -- not repaDctImage since gaussian is not an image
 
-  matrixMultC <- computeUnboxedP (cosOrigV *^ paddedGausU)
+  let matrixMultC = (cosOrigV *^ paddedGausU)
   -- convert it back with idct
-  let matrixMult = R.map (+ 128) $ repaIDct (computeVectorS (delay matrixMultC))
+  matrixMult <- repaIDctImageP matrixMultC
   saveRepaGrey "test.png" matrixMult
   saveRepaGrey "test2.png" convolved
   print ("difference in the DCT "         <> (show (meanDiff matrixMultC convolvedC)))
   print ("difference in the NormalPlane " <> (show (meanDiff matrixMult convolved)))
-  return convolved
 
 meanDiff :: (Source r c, Fractional c, Source r2 c) => Array r DIM2 c -> Array r2 DIM2 c -> c
 meanDiff arr1 = (/ fromIntegral (i * j)) . sumAllS . R.zipWith (\x y -> abs (x - y)) arr1
