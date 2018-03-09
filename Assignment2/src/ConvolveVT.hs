@@ -17,7 +17,7 @@ import Data.Array.Repa.Algorithms.Convolve -- for a stencil this size I'm using 
 -- it seems even the lecture is wrong, because if yo add them all up, they
 -- don't add up to 256.. can check by summing over my gausian and seeing its 256
 gausian :: Array U DIM2 Double
-gausian = fromListUnboxed (ix2 5 5) $ (*) . (/ 256)  <$> [1,4,6,4,1] <*> [1,4,6,4,1]
+gausian = fromListUnboxed (ix2 5 5) $ (*) . (/ 256) <$> [1,4,6,4,1] <*> [1,4,6,4,1]
 
 
 pad :: (Source r e) => e -> DIM2 -> Array r DIM2 e -> Array D DIM2 e
@@ -26,7 +26,7 @@ pad val sh vec = fromFunction sh makePad
     Z :. i :. j = R.extent vec
     makePad sh@(Z :. x :. y)
       | x >= i || y >= j = val
-      | otherwise      = vec ! sh
+      | otherwise        = vec ! sh
 
 padOff :: (Source r e) => e -> DIM2 -> Array r DIM2 e -> Int -> Int -> Array D DIM2 e
 padOff val sh vec offx offy = fromFunction sh makePad
@@ -36,27 +36,39 @@ padOff val sh vec offx offy = fromFunction sh makePad
       | x - offx >= i || x - offx < 0 || y - offy >= j || y - offy < 0 = val
       | otherwise      = vec ! ix2 (x - offx) (y - offy)
 
-testDiff path = do
+meanDiff :: (Source r c, Fractional c, Source r2 c) => Array r DIM2 c -> Array r2 DIM2 c -> c
+meanDiff arr1 = (/ fromIntegral (i * j)) . sumAllS . R.zipWith (\x y -> abs (x - y)) arr1
+  where (Z :. i :. j) = R.extent arr1
+
+
+testDiffGen forwardTransformP inverseTransformP forwardTransform paddingP path = do
   img         <- readIntoRepa path
   let origV    = R.map fromIntegral (repaRGBToGrey img)
   origU       <- computeUnboxedP origV
   convolved   <- convolveOutP outClamp gausian origU
-  convolvedC  <- repaDctImageP . delay $ convolved
+  convolvedC  <- forwardTransformP . delay $ convolved
 
-  cosOrigV    <- repaDctImageP origV
+  cosOrigV    <- forwardTransformP origV
   let cosOrigU = computeUnboxedS (delay cosOrigV)
+  let ext@(Z :. i :. j)   = R.extent cosOrigU
+  let padding | paddingP  = padOff 0 ext gausian (i `div` 2) (j `div` 2)
+              | otherwise = pad    0 ext gausian
 
   paddedGausV <- computeVectorP $ pad 0 (R.extent cosOrigU) gausian
-  paddedGausU <- computeUnboxedP (delay $ repaDct paddedGausV) -- not repaDctImage since gaussian is not an image
+  paddedGausU <- computeUnboxedP (delay $ forwardTransform paddedGausV)
 
   let matrixMultC = (cosOrigV *^ paddedGausU)
   -- convert it back with idct
-  matrixMult <- repaIDctImageP matrixMultC
+  matrixMult <- inverseTransformP matrixMultC
   saveRepaGrey "test.png" matrixMult
   saveRepaGrey "test2.png" convolved
   print ("difference in the DCT "         <> (show (meanDiff matrixMultC convolvedC)))
   print ("difference in the NormalPlane " <> (show (meanDiff matrixMult convolved)))
+  return (matrixMult, convolved)
 
-meanDiff :: (Source r c, Fractional c, Source r2 c) => Array r DIM2 c -> Array r2 DIM2 c -> c
-meanDiff arr1 = (/ fromIntegral (i * j)) . sumAllS . R.zipWith (\x y -> abs (x - y)) arr1
-  where (Z :. i :. j) = R.extent arr1
+-- we give repaDct as this is for the gaussian, which is not an image
+--testDiffDct :: FilePath -> IO ()
+testDiffDct = testDiffGen repaDctImageP repaIDctImageP repaDct False
+
+--testDiffFft :: FilePath -> IO ()
+testDiffFft = testDiffGen repaFftP (fmap (computeVectorS . offsetFft) . repaIFftP) repaFft False

@@ -16,12 +16,6 @@ import qualified Data.Array.IArray as Arr
 import           RepaImage as RI
 import           RepaFilters
 
-testsame :: Bool
-testsame = (round <$> toList (id vec)) == [1,2,3,4]
-  where id  = repaIDctImage . repaDctImage
-        vec = fromVector (ix2 2 2) (V.fromList [1,2,3,4])
-
-
 genPass :: (Source r b, Num b) => (Int -> Int -> Bool) -> Int -> Array r DIM2 b -> Array D DIM2 b
 genPass (<>) n arr = R.traverse arr id shrink
   where shrink f sh@(Z :. i :. j)
