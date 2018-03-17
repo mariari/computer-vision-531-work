@@ -56,7 +56,7 @@ loadRGBJPG = fmap f . load
 
 
 
-testImage = loadRGBA "../data/test-old.png"
+testImage = loadRGB "../data/test-old.png"
 
 imageToGreyMatrix :: LumaPlaneExtractable a => Image a -> Matrix (PixelBaseComponent a)
 imageToGreyMatrix img = matrix (imageWidth img) (imageHeight img) f

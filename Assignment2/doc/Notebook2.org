@@ -32,16 +32,17 @@
 - So I notice an import in the "statistics" package has a discrete
   cosine transformer and its inverse, so Ι decided to use that
   #+BEGIN_SRC haskell
-    repaVecComp :: Shape sh => (V.Vector e1 → V.Vector e2) → Array V sh e1 → Array V sh e2
+    repaVecComp :: Shape sh ⇒ (V.Vector e1 → V.Vector e2) → Array V sh e1 → Array V sh e2
     repaVecComp f arr = fromVector (R.extent arr) (f (toVector arr))
 
-    repaDct :: Shape sh => Array V sh Double → Array V sh Double
-    repaDct = repaVecComp dct
+    repaDctImage :: Shape sh ⇒ Array V sh Double → Array V sh Double
+    repaDctImage = repaVecComp (dct . fmap (+ (-128)))
 
     -- For some reason repaDct ∘ repaIDct doesn't give me the identity
     -- Ι have to divide it by twice the length
-    repaIDct :: Shape sh => Array V sh Double → Array V sh Double
-    repaIDct = repaVecComp ((\v → fmap (/ (fromIntegral (length v) * 2)) v) ∘ idct)
+    repaIDctImage :: Shape sh ⇒ Array V sh Double → Array V sh Double
+    repaIDctImage = repaVecComp (normalize . idct)
+       where normalize v = (+ 128) . (/ (fromIntegral (length v) * 2)) <$> v
   #+END_SRC
   + to get the dct and idct function to work, Ι had to convert our array
     to a vector (this is O(1) as it just unpacks!), so I make a
@@ -50,6 +51,14 @@
     defined I just pass =dct= for =repaDct= and \\ =((\v → fmap (/
     (fromIntegral (length v) * 2)) v) ∘ idct)= for idct (offset
     described above!).
+
+  + I include a -128 offset as we want the image to be centered around
+    0 before we do our high/low pass filter
+
+  + Ι also have repaDct, repaIDct variants which don't have the offset.
+
+  + Also not shown is repaDctImageP and repaIDctImageP which have the
+    offsets and also compute the vectors in parallel.
 
 - Ι can now check if these functions work as expected by the following
   function
@@ -100,22 +109,20 @@
   #+BEGIN_SRC haskell
     computeAbsDiff file passedName filter num = do
       x ← readIntoRepa file
-      y ← computeVectorP $ R.map (fromIntegral ∘ (+ (- 128)) (repaRGBToGrey x)
+      y ← computeVectorP $ R.map fromIntegral (repaRGBToGrey x) :: IO (Array V DIM2 Double)
 
-      let cosY = repaDct y
+      let cosY = repaDctImage y
       let fileName = passedName <> "-" <> show num <> ".png"
 
-      passThrough ← computeVectorP (filter num cosY) >>= computeUnboxedP ∘ R.map (+ 128)
-                                                                          ∘ repaIDct
-      difference  ← R.computeUnboxedP $ R.map (abs ∘ (+ 128)) (y -^ passThrough)
+      passThrough ← repaIDctImageP (filter num cosY) >>= computeUnboxedP . delay
+      difference  ← R.computeUnboxedP $ R.map abs (y -^ passThrough)
 
       saveRepaGrey fileName passThrough
       saveRepaGrey ("abs-diff-" <> fileName) difference
+
   #+END_SRC
   + So here we read the file, then convert it to grey in
-    parallel. Note how we subtract 128, this is because the dct is
-    best done on values from -128 to 127
-
+    parallel.
   + after we set up the data we compute the dct
 
   + We also create the file name here as Ι will save the output
@@ -158,23 +165,25 @@
   [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/bunny-grey.png]]
   + here is the original image
 - _70 tests_
-  + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/bunyhigh-70.png]]
+  + =computeAbsDiff "data/bunny.png" "bunnyhigh-70" highPass 70= \\
+    [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/bunyhigh-70.png]]
     + Here we can see the high pass filter on the bunny, it keeps the
       nice fine details but overall we lose the shape outside of the
       sharp details.
   + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/abs-diff-bunyhigh-70.png]]
     + The absolute difference confirms that pretty much most
       information is lost
-  +
+  + =computeAbsDiff "data/bunny.png" "bunnylow-70" highPass 70= \\
     file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/bunylow-70.png
-    + This is the lowPass Filter on the bunny with 20
+    + This is the lowPass Filter on the bunny with 70
     + as we can see the overall shape of the bunny is kinda reserved,
       but all fine detials are missing
   + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/abs-diff-bunylow-70.png
     + The Absolute difference confirms this as, as the absolute
       difference contains a lot of detail
 - _20 tests_
-  + [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/bunyhigh-20.png]]
+  + =computeAbsDiff "data/bunny.png" "bunnyhigh-20" highPass 20= \\
+    [[file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/bunyhigh-20.png]]
     + this is the high pass filter on the bunny, but instead with a
       size of 20, compared to 70 more details can be seen and the bunny
       is starting to look a lot better outlined than with 20
@@ -182,7 +191,8 @@
     + This is the absolute difference, compared to the 70 this is a
       lot more blurry and disjoint, with only parts of the general shape
       being missing
-  + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/bunylow-20.png
+  + =computeAbsDiff "data/bunny.png" "bunnylow-20" highPass 20= \\
+    file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/bunylow-20.png
     + This is the low pass filter with 20, compared to 70 pretty much
       all detail is gone and only the general shape being intact
   + file:~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/abs-diff-bunylow-20.png

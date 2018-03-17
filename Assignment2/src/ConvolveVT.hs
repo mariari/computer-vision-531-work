@@ -33,8 +33,9 @@ padOff val sh vec offx offy = fromFunction sh makePad
   where
     Z :. i :. j = R.extent vec
     makePad sh@(Z :. x :. y)
-      | x - offx >= i || x - offx < 0 || y - offy >= j || y - offy < 0 = val
-      | otherwise      = vec ! ix2 (x - offx) (y - offy)
+      | x - offx >= i || x - offx < 0
+      || y - offy >= j || y - offy < 0 = val
+      | otherwise                    = vec ! ix2 (x - offx) (y - offy)
 
 meanDiff :: (Source r c, Fractional c, Source r2 c) => Array r DIM2 c -> Array r2 DIM2 c -> c
 meanDiff arr1 = (/ fromIntegral (i * j)) . sumAllS . R.zipWith (\x y -> abs (x - y)) arr1
@@ -62,13 +63,13 @@ testDiffGen forwardTransformP inverseTransformP forwardTransform paddingP path =
   matrixMult <- inverseTransformP matrixMultC
   saveRepaGrey "test.png" matrixMult
   saveRepaGrey "test2.png" convolved
-  print ("difference in the DCT "         <> (show (meanDiff matrixMultC convolvedC)))
-  print ("difference in the NormalPlane " <> (show (meanDiff matrixMult convolved)))
+  print ("difference in the DCT "         <> show (meanDiff matrixMultC convolvedC))
+  print ("difference in the NormalPlane " <> show (meanDiff matrixMult convolved))
   return (matrixMult, convolved)
 
 -- we give repaDct as this is for the gaussian, which is not an image
 --testDiffDct :: FilePath -> IO ()
-testDiffDct = testDiffGen repaDctImageP repaIDctImageP repaDct False
+testDiffDct = testDiffGen repaDctImageP repaIDctImageP repaDct
 
 --testDiffFft :: FilePath -> IO ()
-testDiffFft = testDiffGen repaFftP (fmap (computeVectorS . offsetFft) . repaIFftP) repaFft False
+testDiffFft = testDiffGen repaFftP (fmap (computeVectorS . offsetFft) . repaIFftP) repaFft True

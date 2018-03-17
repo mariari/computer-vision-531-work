@@ -1,6 +1,6 @@
 module ImageCorrelationCv (
   correlate,
-  testIO
+--  testIO
   ) where
 
 import OpenCV.ImgProc.ObjectDetection

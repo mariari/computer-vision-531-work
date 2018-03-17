@@ -5,7 +5,9 @@ module RepaHelper (
   blur,
   repaExtractWindows,
   blurCol,
+  blurZ,
   edgeCol,
+  sobel,
   edgeColMinP,
   edgeColMinS,
   ) where
@@ -57,6 +59,9 @@ sobelY = delay . mapStencil2 BoundClamp sobelEdgeY
 
 blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blur = blurGausX . blurGausY
+
+blurZ :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
+blurZ = blur
 
 sobel :: (Source r b, Num b) => Array r DIM2 b -> Array D DIM2 b
 sobel = sobelX . sobelY

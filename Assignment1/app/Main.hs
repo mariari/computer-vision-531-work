@@ -13,8 +13,7 @@ import qualified Vision.Image as I
 import ImageCorrelationCv
 --main :: IO ()
 
-main = do
-  mainCorr
+main = mainTest
 
 mainCV = correlate "./data/object/base-balls.jpg" "./data/object/base-balls-kernel.jpg"
 
@@ -40,23 +39,25 @@ mainCanny = do
 
 -- Runs in about 20 seconds
 mainRepa = do
-  x <- C.readImageRGB "./data/03001042.jpg[]"
+  x <- C.readImageRGB "./data/Color-save-proper-colors.png"
   let y = case x of Left _ -> error "image not found"; Right z -> z
   -- Blurring
   let z = R.blurCol (R.map fromIntegral (imgData y))
   z'  <- R.computeUnboxedP z :: IO(R.Array R.U R.DIM3 Double)
   -- Sobel Edge Detection
-  z'' <- R.edgeColMinP z' 100
-  computed <- R.computeUnboxedP z'' :: IO(R.Array R.U R.DIM3 Double)
-  let z''' = R.repaToRGBImage computed
+  let z'' = R.edgeCol z'
+  R.computeUnboxedP z'' :: IO(R.Array R.U R.DIM3 Double)
+--  let z''' = R.repaToRGBImage computed
   -- Save
-  savePngImage "./Color-save.png" (ImageRGB8 z''')
+  --savePngImage "./Color-save.png" (ImageRGB8 z''')
 
 mainRepaGrey = do
   x <- testImage
   let y = R.imageToGreyRepa x
-  let z = R.blur $ R.map fromIntegral y
-  savePngImage "./repa-test-real.png" (ImageY8 (R.repaToGreyImage z))
+  R.computeUnboxedP y
+--  let z = R.blur $ R.map fromIntegral y
+--  R.computeUnboxedP z :: IO(R.Array R.U R.DIM2 Double)
+--  savePngImage "./repa-test-real.png" (ImageY8 (R.repaToGreyImage z))
 
 mainMatrix :: IO ()
 mainMatrix = do
@@ -66,3 +67,10 @@ mainMatrix = do
   savePngImage "./test-2.png" (ImageY8 (matrixToGreyImg (imageToGreyMatrix x)))
   savePngImage "./test.png" (ImageY8 new')
   print (pixelAt new' 1 1)
+
+
+
+mainTest = do
+  let x = (R.fromFunction (R.Z R.:. 1500 R.:. 1500) (\_ -> 1))
+  let y = (x :: R.Array R.D R.DIM2 Double)
+  R.computeUnboxedP $ R.blurZ y

@@ -1,4 +1,4 @@
-% Created 2018-03-07 Wed 02:32
+% Created 2018-03-16 Fri 17:11
 \documentclass{article}
 \usepackage[mathletters]{ucs}
 \usepackage[utf8x]{inputenc}
@@ -73,16 +73,17 @@ that the value returned from \texttt{(dct · idct) vec =} $\frac{vec}{\text{leng
 \item So I notice an import in the "statistics" package has a discrete
 cosine transformer and its inverse, so Ι decided to use that
 \begin{verbatim}
-repaVecComp :: Shape sh => (V.Vector e1 → V.Vector e2) → Array V sh e1 → Array V sh e2
+repaVecComp :: Shape sh ⇒ (V.Vector e1 → V.Vector e2) → Array V sh e1 → Array V sh e2
 repaVecComp f arr = fromVector (R.extent arr) (f (toVector arr))
 
-repaDct :: Shape sh => Array V sh Double → Array V sh Double
-repaDct = repaVecComp dct
+repaDctImage :: Shape sh ⇒ Array V sh Double → Array V sh Double
+repaDctImage = repaVecComp (dct . fmap (+ (-128)))
 
 -- For some reason repaDct ∘ repaIDct doesn't give me the identity
 -- Ι have to divide it by twice the length
-repaIDct :: Shape sh => Array V sh Double → Array V sh Double
-repaIDct = repaVecComp ((\v → fmap (/ (fromIntegral (length v) * 2)) v) ∘ idct)
+repaIDctImage :: Shape sh ⇒ Array V sh Double → Array V sh Double
+repaIDctImage = repaVecComp (normalize . idct)
+   where normalize v = (+ 128) . (/ (fromIntegral (length v) * 2)) <$> v
 \end{verbatim}
 \begin{itemize}
 \item to get the dct and idct function to work, Ι had to convert our array
@@ -92,6 +93,14 @@ the vector plane before giving me back the array. With this
 defined I just pass \texttt{dct} for \texttt{repaDct} and \\ \texttt{((\textbackslash{}v → fmap (/
     (fromIntegral (length v) * 2)) v) ∘ idct)} for idct (offset
 described above!).
+
+\item I include a -128 offset as we want the image to be centered around
+0 before we do our high/low pass filter
+
+\item Ι also have repaDct, repaIDct variants which don't have the offset.
+
+\item Also not shown is repaDctImageP and repaIDctImageP which have the
+offsets and also compute the vectors in parallel.
 \end{itemize}
 
 \item Ι can now check if these functions work as expected by the following
@@ -149,23 +158,20 @@ fine details.
 \begin{verbatim}
 computeAbsDiff file passedName filter num = do
   x ← readIntoRepa file
-  y ← computeVectorP $ R.map (fromIntegral ∘ (+ (- 128)) (repaRGBToGrey x)
+  y ← computeVectorP $ R.map fromIntegral (repaRGBToGrey x) :: IO (Array V DIM2 Double)
 
-  let cosY = repaDct y
+  let cosY = repaDctImage y
   let fileName = passedName <> "-" <> show num <> ".png"
 
-  passThrough ← computeVectorP (filter num cosY) >>= computeUnboxedP ∘ R.map (+ 128)
-                                                                      ∘ repaIDct
-  difference  ← R.computeUnboxedP $ R.map (abs ∘ (+ 128)) (y -^ passThrough)
+  passThrough ← repaIDctImageP (filter num cosY) >>= computeUnboxedP . delay
+  difference  ← R.computeUnboxedP $ R.map abs (y -^ passThrough)
 
   saveRepaGrey fileName passThrough
   saveRepaGrey ("abs-diff-" <> fileName) difference
 \end{verbatim}
 \begin{itemize}
 \item So here we read the file, then convert it to grey in
-parallel. Note how we subtract 128, this is because the dct is
-best done on values from -128 to 127
-
+parallel.
 \item after we set up the data we compute the dct
 
 \item We also create the file name here as Ι will save the output
@@ -232,7 +238,8 @@ post the results of high and low on 20 and 70 respectively. \\
 \end{itemize}
 \item \uline{70 tests}
 \begin{itemize}
-\item \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/bunyhigh-70.png}
+\item \texttt{computeAbsDiff "data/bunny.png" "bunnyhigh-70" highPass 70} \\
+    \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/high/bunyhigh-70.png}
 \begin{itemize}
 \item Here we can see the high pass filter on the bunny, it keeps the
 nice fine details but overall we lose the shape outside of the
@@ -243,9 +250,10 @@ sharp details.
 \item The absolute difference confirms that pretty much most
 information is lost
 \end{itemize}
-\item \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/bunylow-70.png}
+\item \texttt{computeAbsDiff "data/bunny.png" "bunnylow-70" highPass 70} \\
+    \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/70/low/bunylow-70.png}
 \begin{itemize}
-\item This is the lowPass Filter on the bunny with 20
+\item This is the lowPass Filter on the bunny with 70
 \item as we can see the overall shape of the bunny is kinda reserved,
 but all fine detials are missing
 \end{itemize}
@@ -257,7 +265,8 @@ difference contains a lot of detail
 \end{itemize}
 \item \uline{20 tests}
 \begin{itemize}
-\item \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/bunyhigh-20.png}
+\item \texttt{computeAbsDiff "data/bunny.png" "bunnyhigh-20" highPass 20} \\
+    \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/high/bunyhigh-20.png}
 \begin{itemize}
 \item this is the high pass filter on the bunny, but instead with a
 size of 20, compared to 70 more details can be seen and the bunny
@@ -269,7 +278,8 @@ is starting to look a lot better outlined than with 20
 lot more blurry and disjoint, with only parts of the general shape
 being missing
 \end{itemize}
-\item \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/bunylow-20.png}
+\item \texttt{computeAbsDiff "data/bunny.png" "bunnylow-20" highPass 20} \\
+    \includegraphics[width=.9\linewidth]{/home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment2/data/lowHighPass/bunny/20/low/bunylow-20.png}
 \begin{itemize}
 \item This is the low pass filter with 20, compared to 70 pretty much
 all detail is gone and only the general shape being intact

@@ -46,17 +46,15 @@ repaIDctImageP = fmap repaIDctImage . computeVectorP
 repaDct :: Shape sh => Array V sh Double -> Array V sh Double
 repaDct = repaVecComp dct
 
--- For some reason repaDct . repaIDct doesn't give me the identity
--- Ι have to divide it by twice the length
 repaIDct :: Shape sh => Array V sh Double -> Array V sh Double
 repaIDct = repaVecComp ((\v -> fmap (/ (fromIntegral (length v) * 2)) v) . idct)
 
 -- Test for DCT ==================================================================================
 
 testsame :: Bool
-testsame = (round <$> toList (id vec)) == [1,2,3,4]
-  where id  = repaIDctImage . repaDctImage
-        vec = fromVector (ix2 2 2) (V.fromList [1,2,3,4])
+testsame = (round <$> toList (iden vec)) == [1,2,3,4]
+  where iden  = repaIDctImage . repaDctImage
+        vec   = fromVector (ix2 2 2) (V.fromList [1,2,3,4])
 
 
 -- Fft ============================================================================================
@@ -65,7 +63,6 @@ repaFft = repaVecComp (fft . fmap (:+ 0))
 
 repaIFft :: Shape sh => Array V sh (Complex Double) -> Array V sh Double
 repaIFft = repaVecComp (fmap magnitude . ifft)
-
 
 repaFftP :: (Monad m, Load r sh Double) => Array r sh Double -> m (Array V sh (Complex Double))
 repaFftP = fmap repaFft . computeVectorP
@@ -78,7 +75,7 @@ offsetFft arr = R.traverse arr id f
   where sh@(Z :. i :. j) = extent arr
         f index (Z :. x :. y)
           | isInside2 sh newShape   = index newShape
-          | x + 2 >= i && y + 2 >= j = index (ix2 (x + 2 - i) (y + 2 - j))
-          | x + 2 >= i              = index (ix2 (x + 2 - i) (y + 2))
-          | otherwise               = index (ix2 (x + 2)     (y + 2 - j))
-         where newShape = ix2 (x + 2) (y + 2)
+          | x + 3 >= i && y + 3 >= j = index (ix2 (x + 3 - i) (y + 3 - j))
+          | x + 3 >= i              = index (ix2 (x + 3 - i) (y + 3))
+          | otherwise               = index (ix2 (x + 3)     (y + 3 - j))
+         where newShape = ix2 (x + 3) (y + 3)
