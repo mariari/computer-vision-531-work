@@ -1,0 +1,97 @@
+% Created 2018-03-30 Fri 19:33
+\documentclass{article}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\date{\today}
+\title{NoteBook1-hs}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.3.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Information about Grenade Library}
+\label{sec-1}
+\begin{itemize}
+\item Grenade is a neural network written in pure Haskell for the purpose
+of writing fast neural networks that are concise and precise
+\item This library gains a lot of expressability and power from its use of
+\texttt{Dependent Types}.
+\item A Dependent type system allows the a type signature to be dependent
+on a value. A language like \href{https://www.idris-lang.org/}{Idris} is built upon this idea.
+\begin{itemize}
+\item An example of a Dependent type would be an array in which it is a
+type error to even try to access an out of range element or a
+Tuple where the 2nd element is always greater than the first
+element.
+\end{itemize}
+\item An example of a simple network written in Haskell is
+\begin{verbatim}
+type SampleNet = Network '[ FullyConnected 10 1, Logit ]
+                         '[ 'D1 10, 'D1 1, 'D1 1 ]
+
+randomMyNet :: MonadRandom SampleNet
+randomMyNet = randomNetwork
+\end{verbatim}
+\begin{itemize}
+\item Here we make a Network that is fully connected that takes 10
+inputs and returns 1 output
+\item Notice that fullyConnected takes 10 and 1, which correspond to the
+numbers in the 2nd list 'D10 and 'D1. This second list are the
+shape. Where 'D1 10 represents a 1D 10 element vector and 'D1 1
+represents a 1D vector with 1 element
+\item Notice we also have a logit layer which just performs a signmoid
+function. Also note that this type takes no term level
+information because it doesn't effect the shape of the network at
+said point.
+\item So really we just made a simple network that does logisitc
+regression.
+\item The randomMyNet is just a way to initalize with random weights.
+\item Notice due to the power of the type system, there is almost no
+term level code that needs to be done to construct such a network
+\end{itemize}
+
+\item More examples of such a network can be seen on Grenade's \href{https://github.com/HuwCampbell/grenade}{Github}
+which shows a few examples most notably a MNIST netowrk with \textasciitilde{}1.5\%
+error and a Shakespeare \texttt{RecurrentNetwork}
+\end{itemize}
+
+\section{Problems!?!?}
+\label{sec-2}
+\begin{itemize}
+\item So Ι ended up doing small tweaks on \href{https://github.com/HuwCampbell/grenade/blob/master/examples/main/mnist.hs}{the MNIST GitHub Example},
+However I wasn't able to properly load the MNIST data.
+\begin{verbatim}
+λ> x = readMNIST "./train-images-idx3-ubyte"
+λ> runExceptT x
+*** Exception: ./train-images-idx3-ubyte: hGetContents: invalid argument (invalid byte sequence)
+\end{verbatim}
+\item I ended up running out of time before figuring out how to properly
+format the MNIST data so Ι can read it. Which is a shame because the
+example code provides \texttt{readMNIST} and \texttt{parseMINST} along with a test I
+could just run. If I got that working I could have just swapped what
+the MNIST type was and tested many networks and see how types played
+with each other
+\item Due to this setback, I ended up just tweaking the example code
+slightly and staying with that
+\end{itemize}
+% Emacs 25.3.1 (Org mode 8.2.10)
+\end{document}

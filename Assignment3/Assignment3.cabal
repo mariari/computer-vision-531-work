@@ -41,7 +41,7 @@ library
                 , vector
 
   exposed-modules:
-      Lib
+      Minst
   other-modules:
       Paths_Assignment3
   default-language: Haskell2010

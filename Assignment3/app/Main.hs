@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Minst as MI
 
 main :: IO ()
-main = someFunc
+main = MI.mai
