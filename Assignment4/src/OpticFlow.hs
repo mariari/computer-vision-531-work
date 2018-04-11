@@ -56,5 +56,3 @@ data WindowSize = Window3
 
 δt :: (Shape sh, Source r1 c, Source r2 c, Num c) => Array r1 sh c -> Array r2 sh c -> Array D sh c
 δt = (-^)
-
-

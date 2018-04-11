@@ -1,0 +1,58 @@
+-- This file has been generated from package.yaml by hpack version 0.20.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 5c75a415e3a24da2db7858dc67b83afb14c4a16824ec547f635e8243c577bb32
+
+name:           Assignment4
+version:        0.1.0.0
+description:    Please see the README on Github at <https://github.com/githubuser/Assignment4#readme>
+homepage:       https://github.com/githubuser/Assignment4#readme
+bug-reports:    https://github.com/githubuser/Assignment4/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2018 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    ChangeLog.md
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/Assignment4
+
+library
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+      , repa
+      , repa-algorithms
+      , JuicyPixels
+      , JuicyPixels-repa
+      , friday
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_Assignment4
+  default-language: Haskell2010
+
+executable Assignment4-exe
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Assignment4
+    , base >=4.7 && <5
+    , repa-algorithms
+    , JuicyPixels
+    , JuicyPixels-repa
+    , friday
+  other-modules:
+      Paths_Assignment4
+  default-language: Haskell2010
