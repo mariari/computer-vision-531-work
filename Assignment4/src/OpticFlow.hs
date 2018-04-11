@@ -11,6 +11,22 @@ import Data.Array.Repa.Stencil.Dim2
 infin :: Fractional a => a
 infin = 1/0
 
+degrees :: (Ord a, Floating a) => a -> a -> a
+degrees 0    0   = 0
+degrees rise 0
+  | rise > 0     = 90
+  | otherwise    = 180
+degrees rise run
+  | rise >= 0 && run > 0 = calc
+  | rise >  0 && run < 0 = calc + 90
+  | rise <= 0 && run < 0 = calc + 180
+  | rise <  0 && run > 0 = calc + 270
+  where calc = abs $ atan (rise / run) * 180 / pi
+
+
+-- add a conversion function that converts degrees into a color, so we can see how things move via colors
+-- Don't want to add arrows as that takes too much effort
+
 -- n is the size of the window
 -- m is the size of the local area
 convfn :: (Source r b, Num b) => Int -> Int -> Array r DIM2 b -> Array r DIM2 b -> Array D DIM2 b
