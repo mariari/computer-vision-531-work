@@ -61,7 +61,7 @@ blur :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
 blur = blurGausX . blurGausY
 
 blurZ :: (Source r b, Fractional b) => Array r DIM2 b -> Array D DIM2 b
-blurZ = blur
+blurZ = blurGausX . blurGausY
 
 sobel :: (Source r b, Num b) => Array r DIM2 b -> Array D DIM2 b
 sobel = sobelX . sobelY
