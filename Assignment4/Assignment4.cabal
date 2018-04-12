@@ -35,6 +35,7 @@ library
       , JuicyPixels
       , JuicyPixels-repa
       , friday
+      , fingertree
   exposed-modules:
       Lib
   other-modules:
@@ -53,6 +54,7 @@ executable Assignment4-exe
     , JuicyPixels
     , JuicyPixels-repa
     , friday
+    , fingertree
   other-modules:
       Paths_Assignment4
   default-language: Haskell2010
