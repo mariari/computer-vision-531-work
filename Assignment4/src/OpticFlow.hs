@@ -33,36 +33,36 @@ degrees rise run
 
 meanDiff :: (Source r c, Source r2 c, Floating c) => Array r DIM2 c -> Array r2 DIM2 c -> c
 meanDiff arr1 = sqrt . (/ fromIntegral (i * j)) . sumAllS . R.zipWith (\x y -> abs (x^2 - y^2)) arr1
-  where (Z :. i :. j) = R.extent arr1
+  where Z :. i :. j = R.extent arr1
 
 -- n is the size of the window
 -- m is the size of the local area
 -- So we aren't going to go over the entire area, instead we are going to compute the image m * n + n `div` 2 from the edge
 -- and do this for patches of size n
---convfn :: (Floating a, Floating e, Ord a, Ord e, Source r e) => Int -> Int -> Array r DIM2 e -> Array r DIM2 e -> Array D DIM2 a
 convfn n m img1 img2 = R.fromFunction newSize f
   where
     sideSize        = n `div` 2
     edgeSize        = m * n + sideSize
     Z :. i :. j     = extent img1
-    newSize         = ix2 (i `div` edgeSize) (j `div` edgeSize)
+    newSize         = ix2 (i `div` edgeSize) (j `div` edgeSize) -- this gives the boundary so we stay inside the image
     f (Z :. x :. y) = comp
       where
-        centerX    = edgeSize + x * n
-        centerY    = edgeSize + y * n
-        extractImg = extract (ix2 centerX centerY) (ix2 n n)
-        current    = R.computeUnboxedS $ extractImg img1
-        current2   = extractImg img2
-        diff       = meanDiff current current2
-        comp | diff == 0 = 0
-             | otherwise = uncurry degrees added
+        centerX     = edgeSize + x * n
+        centerY     = edgeSize + y * n
+        fromMid ι κ = ix2 (centerX + ι) (centerY + κ)
+        extractImg  = extract (fromMid 0 0) (ix2 n n)
+        current     = R.computeUnboxedS $ extractImg img1
+        sameSpotOn2 = R.computeUnboxedS $ extractImg img2
+        comp | current == sameSpotOn2 = 0
+             | otherwise              = uncurry degrees added
         -- if the image moved at all then we have to add everything to a priority queue
         added = (fromIntegral lowestI, fromIntegral lowestJ)
           where
-            (lowestI, lowestJ)   = peek $ foldr insertPQ empty allspots
-            allspots             = (,) <$> [negate n*m .. n*m] <*> [negate n*m .. n*m] -- get all points
-            insertPQ (i,j) queue =  add diff (i,j) queue
-              where diff = meanDiff current (extract (ix2 (centerX + i) (centerY + j)) (ix2 n n) img2)
+            (lowestI, lowestJ) = peek $ foldr insertPQ empty allspots
+            allspots           = (,) <$> [negate n*m .. n*m] <*> [negate n*m .. n*m] -- get all points
+            insertPQ (ι,κ)     = add diff (ι,κ)
+              where
+                diff = meanDiff current (extract (fromMid ι κ) (ix2 n n) img2)
 
 peek :: Ord k => PQueue k t -> t
 peek = value . minView
