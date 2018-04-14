@@ -84,5 +84,18 @@ data WindowSize = Window3
 δy Window5 = sobelY5
 δy Window7 = sobelY7
 
-δt :: (Shape sh, Source r1 c, Source r2 c, Num c) => Array r1 sh c -> Array r2 sh c -> Array D sh c
+δt :: (Source r1 c, Source r2 c, Num c) => Array r1 DIM2 c -> Array r2 DIM2 c -> Array D DIM2 c
 δt = (-^)
+
+ab :: (Num e, Source r1 e, Source r e)
+   => WindowSize
+   -> Array r DIM2 e
+   -> Array r1 DIM2 e
+   -> (Array D DIM2 e, Array D DIM1 e)
+ab windowSize img img2 = (diffb, difft)
+  where (_ :. i :. j) = R.extent img
+        diffb = reshape (ix2 (i*j) 2) $ interleave2 diffx diffy
+        diffx = op $ δx windowSize
+        diffy = op $ δy windowSize
+        difft = op $ R.map negate . δt img2
+        op f  = reshape (ix1 (i*j)) (f img)

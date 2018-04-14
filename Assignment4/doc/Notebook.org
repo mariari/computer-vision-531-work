@@ -142,4 +142,93 @@
   #+END_SRC
   + meanDiff just takes 2 arrays and basically just runs the formula
     RMSE(a,b) = $\sqrt{\frac{\sum_{t=0}^{n-1}((a_t - b_t)^{2})}{n}}$
-** With Gradient constraintp
+** With Gradient constraint
+*** Computing the discrete derivative
+- Well to calculate I we just need to calculate Δt, Δx, and Δy. For Δx and
+  Δy, we can just take the sobel filter for the x direction and the y
+  direction (this serves the same as checking the change in the x and y
+  direction).
+  #+BEGIN_SRC haskell
+    sobelEdgeX = [stencil2| -1 0 1
+                            -2 0 2
+                            -1 0 1|]
+
+
+    sobelEdgeX7 = [stencil2| 3   2   1   0   -1  -2  -3
+                             4   3   2   0   -2  -3  -4
+                             5   4   3   0   -3  -4  -5
+                             6   5   4   0   -4  -5  -6
+                             5   4   3   0   -3  -4  -5
+                             4   3   2   0   -2  -3  -4
+                             3   2   1   0   -1  -2  -3|]
+
+    sobelX7 :: (Source r b, Num b) ⇒ Array r DIM2 b → Array PC5 DIM2 b
+    sobelY7 :: (Source r b, Num b) ⇒ Array r DIM2 b → Array PC5 DIM2 b
+    sobelX7 = mapStencil2 BoundClamp sobelEdgeX7
+    sobelY7 = mapStencil2 BoundClamp sobelEdgeY7
+  #+END_SRC
+  + Here is an example definition of a size 7 sobel kernel and a size 3
+    sobel kernel in the x direction, and can apply the sobel by just
+    using mapstencil with a bounded clamp
+
+- Now that we have those defined we can now define the change in x and y
+  with varying kernel size with the following
+  #+BEGIN_SRC haskell
+    data WindowSize = Window3
+                    | Window5
+                    | Window7
+
+    δx :: (Num b, Source r b) ⇒ WindowSize → Array r DIM2 b → Array PC5 DIM2 b
+    δx Window3 = sobelX
+    δx Window5 = sobelX5
+    δx Window7 = sobelX7
+
+    δy :: (Num b, Source r b) ⇒ WindowSize → Array r DIM2 b → Array PC5 DIM2 b
+    δy Window3 = sobelY
+    δy Window5 = sobelY5
+    δy Window7 = sobelY7
+  #+END_SRC
+- Since I'm using hardcoded sobel values instead of a generalized
+  version, I make a type called WindowSize that will be used to
+  dispatch on size request
+- From Here the Δx and Δy become fully realized as they are just
+  different kernel size of the sobel
+- dt is also simple
+  #+BEGIN_SRC haskell
+    δt :: (Shape sh, Source r1 c, Source r2 c, Num c)
+          ⇒ Array r1 sh c → Array r2 sh c → Array D sh c
+    δt = (-^)
+  #+END_SRC
+  + this function simply just does elementwise subtraction from each pixel
+- Now that we have these functions define, we now have A and b also
+  defined, we can trivially define a function that grabs it for us
+  #+BEGIN_SRC haskell
+    ab :: (Num e, Source r1 e, Source r e)
+       ⇒ WindowSize
+       → Array r DIM2 e
+       → Array r1 DIM2 e
+       → (Array D DIM2 e, Array D DIM1 e)
+    ab windowSize img img2 = (diffb, difft)
+      where (_ :. i :. j) = R.extent img
+            diffb = reshape (ix2 (i*j) 2) $ interleave2 diffx diffy
+            diffx = op $ δx windowSize
+            diffy = op $ δy windowSize
+            difft = op $ R.map negate . δt img2
+            op f  = reshape (ix1 (i*j)) (f img)
+  #+END_SRC
+  * so here we just define =op= which just calls reshape on apply our
+    function to the image
+
+  * For δx and δy this is rather straight forward, we pass forward the
+    windowSize information and create our 0^th and 1^th position of our
+    2d array with 2 columns. After we do this we can combine Δx and Δy
+    with diffb which just interleaves the elements (places the 1st x
+    after the first y and the 2nd x after the second y... etc etc).
+
+  * As for the Δt, we just map negation on the entire array after
+    applying δt
+* Plotting
+- I didn't have time to figure out a plotting lib in time (nor finding
+  the one Ι found previously), so there will be no flow comparison, and
+  for that I do apologize. due to how the code is set up, it would be
+  trivially to mess with the numbers going into this
