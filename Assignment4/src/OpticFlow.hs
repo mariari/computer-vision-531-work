@@ -2,13 +2,14 @@ module OpticFlow
   ( δx
   , δy
   , δt
+  , convfn
+  , ab
   ) where
 
 import Filters
 import Data.Array.Repa as R
 import Data.Array.Repa.Stencil.Dim2
 import Data.PriorityQueue.FingerTree as F
-import Debug.Trace
 import Data.Monoid
 
 infin :: Fractional a => a
@@ -53,8 +54,9 @@ convfn n m img1 img2 = R.fromFunction newSize f
         extractImg  = extract (fromMid 0 0) (ix2 n n)
         current     = R.computeUnboxedS $ extractImg img1
         sameSpotOn2 = R.computeUnboxedS $ extractImg img2
-        comp | current == sameSpotOn2 = 0
-             | otherwise              = uncurry degrees added
+        comp
+          | current == sameSpotOn2 = 0
+          | otherwise              = uncurry degrees added
         -- if the image moved at all then we have to add everything to a priority queue
         added = (fromIntegral lowestI, fromIntegral lowestJ)
           where

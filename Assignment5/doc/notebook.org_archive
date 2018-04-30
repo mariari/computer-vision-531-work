@@ -1,0 +1,18 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/loli/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment5/doc/notebook.org
+
+
+* Camera Calibration matrix
+:PROPERTIES:
+:ARCHIVE_TIME: 2018-04-30 Mon 04:41
+:ARCHIVE_FILE: ~/Documents/Workspace/Haskell/Class/531/eecs531-jxo136/Assignment5/doc/notebook.org
+:ARCHIVE_OLPATH: Camera Model
+:ARCHIVE_CATEGORY: notebook
+:END:
+- [[file:light.png]]
+- The slide on page 4 describes viewing an image through a pinhole and
+  seeing the inverse image.
+- In our case, the pinhole would be our camera lens, and the outlining
+  sketch of the candle in the image would be 
